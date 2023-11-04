@@ -1,0 +1,4 @@
+.envrc
+
+# Ignore all log files
+*.log

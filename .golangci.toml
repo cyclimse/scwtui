@@ -1,0 +1,51 @@
+# Based on: https://github.com/go-acme/lego/blob/master/.golangci.toml
+
+[run]
+timeout = "1m"
+skip-files = []
+
+[linters]
+enable-all = true
+disable = [
+    "depguard",
+    "nolintlint",
+    "deadcode",         # deprecated
+    "exhaustivestruct", # deprecated
+    "golint",           # deprecated
+    "ifshort",          # deprecated
+    "interfacer",       # deprecated
+    "maligned",         # deprecated
+    "nosnakecase",      # deprecated
+    "scopelint",        # deprecated
+    "structcheck",      # deprecated
+    "varcheck",         # deprecated
+    "cyclop",           # duplicate of gocyclo
+    "sqlclosecheck",    # not relevant (SQL)
+    "rowserrcheck",     # not relevant (SQL)
+    "execinquery",      # not relevant (SQL)
+    "lll",
+    "dupl",             # not relevant
+    "prealloc",         # too many false-positive
+    "bodyclose",        # too many false-positive
+    "gomnd",
+    "testpackage",      # not relevant
+    "tparallel",        # not relevant
+    "paralleltest",     # not relevant
+    "nestif",           # too many false-positive
+    "wrapcheck",
+    "goerr113",         # not relevant
+    "nlreturn",         # not relevant
+    "wsl",              # not relevant
+    "exhaustive",       # not relevant
+    "exhaustruct",      # not relevant
+    "makezero",         # not relevant
+    "forbidigo",        # not relevant
+    "varnamelen",       # not relevant
+    "nilnil",           # not relevant
+    "ireturn",          # not relevant
+    "contextcheck",     # too many false-positive
+    "forcetypeassert",
+    "tagliatelle",
+    "errname",
+    "errchkjson",
+]

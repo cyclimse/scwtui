@@ -1,0 +1,21 @@
+package ui
+
+import (
+	"log/slog"
+
+	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scaleway-dangling/internal/ui/keys"
+	"github.com/scaleway/scaleway-sdk-go/scw"
+)
+
+// ApplicationState is the state passed to the UI.
+// It contains the store and the Scaleway client.
+type ApplicationState struct {
+	Logger            *slog.Logger
+	Store             resource.Storer
+	Search            resource.Searcher
+	ScwClient         *scw.Client
+	ScwProfileName    string
+	Keys              keys.KeyMap
+	ProjectIDsToNames map[string]string
+}
