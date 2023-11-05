@@ -27,8 +27,8 @@ func (c Container) Metadata() resource.Metadata {
 	}
 }
 
-func (f Container) CockpitMetadata() resource.CockpitMetadata {
-	s := strings.TrimPrefix(f.DomainName, "https://")
+func (c Container) CockpitMetadata() resource.CockpitMetadata {
+	s := strings.TrimPrefix(c.DomainName, "https://")
 	resourceName := strings.Split(s, ".")[0]
 	return resource.CockpitMetadata{
 		CanViewLogs:  true,
@@ -37,15 +37,15 @@ func (f Container) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (f Container) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (c Container) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeleteContainer(&sdk.DeleteContainerRequest{
-		ContainerID: f.ID,
-		Region:      f.Region,
+		ContainerID: c.ID,
+		Region:      c.Region,
 	})
 	if err != nil {
 		return err
 	}
 
-	return s.DeleteResource(ctx, f)
+	return s.DeleteResource(ctx, c)
 }

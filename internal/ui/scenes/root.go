@@ -89,7 +89,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if !m.search.Dirty() {
 			m.table.UpdateResources(msg)
 		}
-		return m, refreshEvery(m.state, 3*time.Second, m.search.Dirty())
+		return m, refreshEvery(m.state, time.Second, m.search.Dirty())
 	case search.SearchResultsMsg:
 		m.table.UpdateResources(msg.Resources)
 		return m, nil
@@ -118,6 +118,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch m.focusedView {
 		case searchFocus:
 			m.search, cmd = m.search.Update(msg)
+			if !m.search.Dirty() {
+				m.setFocused(tableFocus)
+				// we ignore the cmd because we don't want to refresh the table
+				return m, nil
+			}
 			return m, cmd
 		case confirmFocus:
 			m.confirm, cmd = m.confirm.Update(msg)

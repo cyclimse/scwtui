@@ -31,16 +31,25 @@ func NewStore(ctx context.Context, shard string) (*Store, error) {
 	queries := db.New(sqlDB)
 
 	return &Store{
-		DB:      sqlDB,
-		queries: queries,
+		DB:           sqlDB,
+		queries:      queries,
+		unmarshaller: ScalewayResourceUnmarshal{},
 	}, nil
 }
 
 type Store struct {
-	DB      *sql.DB
-	queries *db.Queries
+	DB           *sql.DB
+	queries      *db.Queries
+	unmarshaller ResourceUnmarshaler
 }
 
+// Close closes the store.
 func (s *Store) Close() error {
 	return s.DB.Close()
+}
+
+// SetUnmarshaller sets the unmarshaller used to unmarshal the resources.
+// In demo mode, the unmarshaller is set to a demo unmarshaller that returns a demo resource.
+func (s *Store) SetUnmarshaller(u ResourceUnmarshaler) {
+	s.unmarshaller = u
 }

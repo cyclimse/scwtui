@@ -3,48 +3,12 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/resource/scaleway"
 	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite/db"
 )
-
-func fromString[T resource.Resource](s string) (resource.Resource, error) {
-	var r T
-	err := json.Unmarshal([]byte(s), &r)
-	if err != nil {
-		return nil, fmt.Errorf("store: failed to unmarshal resource: %w", err)
-	}
-	return r, nil
-}
-
-func intoResource(resourceType resource.Type, resourceData string) (resource.Resource, error) {
-	switch resourceType {
-	case resource.TypeProject:
-		return fromString[scaleway.Project](resourceData)
-	case resource.TypeIAMApplication:
-		return fromString[scaleway.IAMApplication](resourceData)
-	case resource.TypeCockpit:
-		return fromString[scaleway.Cockpit](resourceData)
-	case resource.TypeFunctionNamespace:
-		return fromString[scaleway.FunctionNamespace](resourceData)
-	case resource.TypeFunction:
-		return fromString[scaleway.Function](resourceData)
-	case resource.TypeContainerNamespace:
-		return fromString[scaleway.ContainerNamespace](resourceData)
-	case resource.TypeContainer:
-		return fromString[scaleway.Container](resourceData)
-	case resource.TypeRegistryNamespace:
-		return fromString[scaleway.RegistryNamespace](resourceData)
-	case resource.TypeRdbInstance:
-		return fromString[scaleway.RdbInstance](resourceData)
-	default:
-		return nil, fmt.Errorf("store: unknown resource type %s", resourceType)
-	}
-}
 
 func (s *Store) GetResource(ctx context.Context, resourceID string) (resource.Resource, error) {
 	r, err := s.queries.GetResource(ctx, resourceID)
@@ -55,7 +19,7 @@ func (s *Store) GetResource(ctx context.Context, resourceID string) (resource.Re
 		return nil, fmt.Errorf("store: failed to get resource with id %s: %w", resourceID, err)
 	}
 
-	return intoResource(resource.Type(r.Type), r.Data.(string))
+	return s.unmarshaller.UnmarshalResource(resource.Type(r.Type), r.Data.(string))
 }
 
 // ListAllResources implements resource.Storer.
@@ -68,7 +32,7 @@ func (s *Store) ListAllResources(ctx context.Context) ([]resource.Resource, erro
 	resources := make([]resource.Resource, 0, len(rows))
 
 	for _, row := range rows {
-		r, err := intoResource(resource.Type(row.Type), row.Data.(string))
+		r, err := s.unmarshaller.UnmarshalResource(resource.Type(row.Type), row.Data.(string))
 		if err != nil {
 			return nil, err
 		}
@@ -77,11 +41,6 @@ func (s *Store) ListAllResources(ctx context.Context) ([]resource.Resource, erro
 	}
 
 	return resources, nil
-}
-
-// ListAllResourcesInProject implements resource.Storer.
-func (*Store) ListAllResourcesInProject(_ context.Context, _ string) ([]resource.Resource, error) {
-	panic("unimplemented")
 }
 
 // FindTypedByPredicateInProject finds all the resources of a given type in a project that match a predicate.
@@ -97,7 +56,7 @@ func (s *Store) FindTypedByPredicateInProject(ctx context.Context, resourceType 
 	resources := make([]resource.Resource, 0, len(rows))
 
 	for _, row := range rows {
-		r, err := intoResource(resourceType, row.Data.(string))
+		r, err := s.unmarshaller.UnmarshalResource(resource.Type(row.Type), row.Data.(string))
 		if err != nil {
 			return nil, err
 		}
@@ -125,7 +84,7 @@ func (s *Store) ListResourcesByIDs(ctx context.Context, ids []string) ([]resourc
 	resources := make([]resource.Resource, 0, len(rows))
 
 	for _, row := range rows {
-		r, err := intoResource(resource.Type(row.Type), row.Data.(string))
+		r, err := s.unmarshaller.UnmarshalResource(resource.Type(row.Type), row.Data.(string))
 		if err != nil {
 			return nil, err
 		}

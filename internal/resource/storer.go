@@ -6,7 +6,8 @@ import (
 )
 
 var (
-	ErrResourceNotFound = errors.New("resource not found")
+	// ErrResourceNotFound is returned when a resource is not found.
+	ErrResourceNotFound = errors.New("store: resource not found")
 )
 
 type Predicate func(r Resource) bool
@@ -19,9 +20,6 @@ type Storer interface {
 
 	// ListAllResources returns all resources.
 	ListAllResources(ctx context.Context) ([]Resource, error)
-
-	// ListAllResourcesInProject returns all resources in a project.
-	ListAllResourcesInProject(ctx context.Context, projectID string) ([]Resource, error)
 
 	// ListResourcesByIDs returns all resources with the given IDs.
 	// Used in combination of the search API to get the resources that match a query.I

@@ -48,8 +48,12 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 
 	if cmd.Demo {
 		demoDiscovery := demo.NewDiscovery()
-		copy(projects, demoDiscovery.Projects())
+		projects = demoDiscovery.Projects()
+
+		logger.Info("running in demo mode", slog.Any("projects", projects))
+
 		discoverer = demoDiscovery
+		store.SetUnmarshaller(&sqlite.DemoResourceUnmarshal{})
 	} else {
 		client, err = scw.NewClient(scw.WithUserAgent("scaleway-dangling"), scw.WithProfile(p))
 		if err != nil {

@@ -31,7 +31,7 @@ type Metadata struct {
 	Type Type `json:"type"`
 
 	// Locality is the locality of the resource.
-	Locality Locality `json:"locality"`
+	Locality Locality `json:"locality,omitempty"`
 }
 
 type CockpitMetadata struct {
