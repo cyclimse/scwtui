@@ -3,6 +3,7 @@ module github.com/cyclimse/scwtui
 go 1.21.1
 
 require (
+	github.com/alecthomas/chroma/v2 v2.10.0
 	github.com/brianvoe/gofakeit/v6 v6.24.0
 	github.com/charmbracelet/bubbletea v0.24.1
 	github.com/mattn/go-runewidth v0.0.15
@@ -10,7 +11,6 @@ require (
 
 require (
 	github.com/RoaringBitmap/roaring v1.2.3 // indirect
-	github.com/alecthomas/chroma/v2 v2.10.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -104,7 +104,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/sync v0.4.0
+	golang.org/x/sync v0.5.0
 	golang.org/x/tools v0.14.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
