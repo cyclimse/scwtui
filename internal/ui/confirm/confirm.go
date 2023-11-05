@@ -13,7 +13,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
 	"github.com/cyclimse/scaleway-dangling/internal/ui"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/styles"
 )
 
 const (
@@ -111,7 +110,7 @@ func (m *Model) viewResource() string {
 func (m Model) View() string {
 	content := modalStyle.Render(lipgloss.JoinVertical(
 		lipgloss.Left,
-		lipgloss.PlaceHorizontal(modalStyle.GetWidth()-modalStyle.GetHorizontalFrameSize(), lipgloss.Center, styles.TitleStyle.Render(title)),
+		lipgloss.PlaceHorizontal(modalStyle.GetWidth()-modalStyle.GetHorizontalFrameSize(), lipgloss.Center, m.state.Styles.Title.Render(title)),
 		m.text,
 		"\n",
 		m.viewResource(),

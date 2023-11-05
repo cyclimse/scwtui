@@ -136,14 +136,18 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 	}
 
 	appState := ui.ApplicationState{
-		Logger:            logger,
-		Store:             store,
-		Search:            search,
+		Logger: logger,
+
+		Store:   store,
+		Search:  search,
+		Monitor: cockpit.NewCockpit(logger, client),
+
 		ScwClient:         client,
 		ScwProfileName:    profileName,
-		Monitor:           cockpit.NewCockpit(logger, client),
-		Keys:              keys.DefaultKeyMap(),
 		ProjectIDsToNames: projectIDsToNames,
+
+		Keys:   keys.DefaultKeyMap(),
+		Styles: ui.DefaultStyles(),
 	}
 	m := scenes.Root(appState)
 

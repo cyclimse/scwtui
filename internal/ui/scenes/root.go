@@ -224,8 +224,8 @@ func (m *Model) setFocused(focused Focus) tea.Cmd {
 	case journalFocus:
 		m.table.Blur()
 		// add exta height to account for table header and border
-		const extraHeight = 5
-		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width(), m.table.Height()+extraHeight)
+		const extraHeight = 2
+		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width()-2, m.table.Height()+extraHeight)
 		return m.journal.Init()
 	}
 
