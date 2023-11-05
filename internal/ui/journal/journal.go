@@ -40,8 +40,9 @@ func Journal(state ui.ApplicationState, r resource.Resource, width, height int) 
 }
 
 type LogsMsg struct {
-	Err  error
-	Logs []resource.Log
+	Err        error
+	Logs       []resource.Log
+	ResourceID string
 }
 
 func refreshEvery(state ui.ApplicationState, r resource.Resource, d time.Duration) tea.Cmd {
@@ -54,7 +55,7 @@ func refreshEvery(state ui.ApplicationState, r resource.Resource, d time.Duratio
 			state.Logger.Error("journal: failed to get logs", slog.String("error", err.Error()))
 			return LogsMsg{Err: err}
 		}
-		return LogsMsg{Logs: logs}
+		return LogsMsg{Logs: logs, ResourceID: r.Metadata().ID}
 	})
 }
 
@@ -71,6 +72,13 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case LogsMsg:
+		// this can sometimes happen if the user switches to the logs tab
+		// of another resource before the logs for the previous resource
+		// have been loaded.
+		if msg.ResourceID != m.resource.Metadata().ID {
+			return m, nil
+		}
+
 		if msg.Err != nil {
 			m.errorMsg = fmt.Sprintf("Error getting logs: %s", msg.Err)
 			return m, nil
@@ -117,7 +125,7 @@ func (m Model) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		header,
-		m.state.Styles.BaseBorder.Render(body),
+		m.state.Styles.BaseBorder.Width(m.viewport.Width).Render(body),
 	)
 }
 

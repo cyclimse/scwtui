@@ -116,9 +116,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, m.state.Keys.Help):
-			m.header.ToggleHelp()
-			return m, nil
 		case key.Matches(msg, m.state.Keys.Delete):
 			if m.focused == ui.TableFocused {
 				m.setFocused(ui.ConfirmFocused)

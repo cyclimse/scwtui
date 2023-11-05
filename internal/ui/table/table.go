@@ -41,7 +41,7 @@ func Table(projectsIDsToNames map[string]string) Model {
 func (m Model) Init() tea.Cmd { return nil }
 
 const (
-	additionalHorizontalPadding = 7
+	additionalHorizontalPadding = 8
 	tableHeaderHeight           = 4
 )
 

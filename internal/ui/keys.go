@@ -7,10 +7,6 @@ import (
 
 func DefaultKeyMap() KeyMap {
 	defaultRootKeyMap := RootKeyMap{
-		Help: key.NewBinding(
-			key.WithKeys("?"),
-			key.WithHelp("?", "help"),
-		),
 		Quit: key.NewBinding(
 			key.WithKeys("esc", "ctrl+c"),
 			key.WithHelp("esc, ctrl+c", "quit"),
@@ -43,7 +39,7 @@ func DefaultKeyMap() KeyMap {
 
 			Confirm: key.NewBinding(
 				key.WithKeys("enter"),
-				key.WithHelp("enter", "confirm deletion"),
+				key.WithHelp("enter", "to confirm deletion"),
 			),
 		},
 	}
@@ -68,18 +64,15 @@ func (m KeyMap) Get(focused Focused) help.KeyMap {
 
 // Those are the keybindings that are available in all scenes.
 type RootKeyMap struct {
-	Help key.Binding
 	Quit key.Binding
 }
 
 func (m RootKeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{m.Help, m.Quit}
+	return []key.Binding{m.Quit}
 }
 
 func (m RootKeyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		m.ShortHelp(),
-	}
+	return nil
 }
 
 type TableKeyMap struct {
@@ -91,16 +84,17 @@ type TableKeyMap struct {
 }
 
 func (m TableKeyMap) ShortHelp() []key.Binding {
-	main := []key.Binding{m.Help, m.Delete, m.Logs, m.Search}
-	return main
+	return []key.Binding{
+		m.Search,
+		m.Logs,
+		m.Delete,
+		m.ToggleAltView,
+		m.Quit,
+	}
 }
 
 func (m TableKeyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		{m.Help, m.Quit},
-		{m.Delete, m.Logs, m.ToggleAltView},
-		{m.Search},
-	}
+	return nil
 }
 
 type ConfirmKeyMap struct {
@@ -109,12 +103,12 @@ type ConfirmKeyMap struct {
 }
 
 func (m ConfirmKeyMap) ShortHelp() []key.Binding {
-	return []key.Binding{m.Help, m.Confirm}
+	return []key.Binding{
+		m.Confirm,
+		m.Quit,
+	}
 }
 
 func (m ConfirmKeyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		{m.Help, m.Quit},
-		{m.Confirm},
-	}
+	return nil
 }

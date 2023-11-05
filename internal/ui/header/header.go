@@ -41,7 +41,13 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
-const infoTemplate = `Scaleway Profile: %s`
+const (
+	// infoTemplate is the template for the info text.
+	infoTemplate = `Scaleway Profile: %s`
+
+	// additionalHorizontalPadding is the additional padding to add to the left for the help menu.
+	additionalHorizontalPadding = 2
+)
 
 func (m Model) View() string {
 	if m.help.ShowAll {
@@ -50,19 +56,15 @@ func (m Model) View() string {
 	}
 
 	info := fmt.Sprintf(infoTemplate, m.state.ScwProfileName)
-	widthAfterInfo := m.width - baseStyle.GetPaddingLeft() - lipgloss.Width(info)
+	widthAfterInfo := m.width - lipgloss.Width(info) - additionalHorizontalPadding
 	return baseStyle.Render(
 		lipgloss.JoinHorizontal(0,
 			info,
-			lipgloss.PlaceHorizontal(widthAfterInfo, 1,
+			lipgloss.PlaceHorizontal(widthAfterInfo, lipgloss.Right,
 				m.help.View(m.state.Keys.Get(m.focused)),
 			),
 		),
 	)
-}
-
-func (m *Model) ToggleHelp() {
-	m.help.ShowAll = !m.help.ShowAll
 }
 
 func (m *Model) SetFocused(focused ui.Focused) {
