@@ -4,7 +4,6 @@ import (
 	"log/slog"
 
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/keys"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
@@ -21,7 +20,7 @@ type ApplicationState struct {
 	ScwProfileName    string
 	ProjectIDsToNames map[string]string
 
-	Keys keys.KeyMap
+	Keys KeyMap
 
 	Styles Styles
 }

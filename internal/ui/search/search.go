@@ -35,7 +35,7 @@ func (m Model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-type SearchResultsMsg struct {
+type ResultsMsg struct {
 	Resources []resource.Resource
 }
 
@@ -45,7 +45,7 @@ func searchResources(state ui.ApplicationState, query string) tea.Cmd {
 		resourceIDs, err := state.Search.Search(ctx, query)
 		if err != nil {
 			state.Logger.Error("failed to search resources", slog.String("error", err.Error()))
-			return SearchResultsMsg{
+			return ResultsMsg{
 				Resources: []resource.Resource{},
 			}
 		}
@@ -57,7 +57,7 @@ func searchResources(state ui.ApplicationState, query string) tea.Cmd {
 			state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
 		}
 
-		return SearchResultsMsg{
+		return ResultsMsg{
 			Resources: resources,
 		}
 	}

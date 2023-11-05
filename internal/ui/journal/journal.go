@@ -124,6 +124,10 @@ func (m Model) View() string {
 func (m Model) viewHeader() string {
 	metadata := m.resource.Metadata()
 	header := m.state.Styles.Title.Render("Logs for " + strings.ToLower(metadata.Type.String()) + " " + metadata.Name)
+	if m.errorMsg != "" {
+		header += "\n" + m.state.Styles.Error.Render(m.errorMsg)
+	}
+
 	return header
 }
 

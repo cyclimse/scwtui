@@ -15,10 +15,11 @@ const MaxHeight = 3
 var baseStyle = lipgloss.NewStyle().
 	PaddingLeft(1)
 
-func Header(state ui.ApplicationState) Model {
+func Header(initialFocused ui.Focused, state ui.ApplicationState) Model {
 	return Model{
-		state: state,
-		help:  help.New(),
+		state:   state,
+		help:    help.New(),
+		focused: initialFocused,
 	}
 }
 
@@ -43,13 +44,18 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 const infoTemplate = `Scaleway Profile: %s`
 
 func (m Model) View() string {
+	if m.help.ShowAll {
+		m.help.Width = m.width
+		return m.help.View(m.state.Keys.Get(m.focused))
+	}
+
 	info := fmt.Sprintf(infoTemplate, m.state.ScwProfileName)
 	widthAfterInfo := m.width - baseStyle.GetPaddingLeft() - lipgloss.Width(info)
 	return baseStyle.Render(
 		lipgloss.JoinHorizontal(0,
 			info,
 			lipgloss.PlaceHorizontal(widthAfterInfo, 1,
-				m.help.View(m.state.Keys),
+				m.help.View(m.state.Keys.Get(m.focused)),
 			),
 		),
 	)
@@ -59,8 +65,13 @@ func (m *Model) ToggleHelp() {
 	m.help.ShowAll = !m.help.ShowAll
 }
 
+func (m *Model) SetFocused(focused ui.Focused) {
+	m.focused = focused
+}
+
 type Model struct {
-	state ui.ApplicationState
-	help  help.Model
-	width int
+	state   ui.ApplicationState
+	focused ui.Focused
+	help    help.Model
+	width   int
 }

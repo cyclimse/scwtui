@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -25,8 +26,6 @@ const (
 	// The magic word to confirm deletion.
 	magicWord = "DELETE"
 )
-
-var modalStyle = lipgloss.NewStyle().Border(lipgloss.NormalBorder(), true).Width(50).Padding(1, 2)
 
 func Confirm(state ui.ApplicationState, r resource.Resource, width, height int) Model {
 	ti := textinput.New()
@@ -66,23 +65,18 @@ func deleteResource(state ui.ApplicationState, r resource.Resource) tea.Cmd {
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "enter":
-			if m.textInput.Value() == magicWord {
-				cmd = deleteResource(m.state, m.resource)
-				return m, cmd
-			}
+	if msg, ok := msg.(tea.KeyMsg); ok {
+		if key.Matches(msg, m.state.Keys.Confirm) && m.textInput.Value() == magicWord {
+			cmd = deleteResource(m.state, m.resource)
+			return m, cmd
 		}
 	}
 
 	m.textInput, cmd = m.textInput.Update(msg)
 
-	switch msg := msg.(type) {
-	case deletionResultMsg:
+	if msg, ok := msg.(deletionResultMsg); ok {
 		if msg.err != nil {
-			m.text = fmt.Sprintf("Error deleting resource: %s", msg.err)
+			m.errorMsg = fmt.Sprintf("Error deleting resource: %s", msg.err)
 			return m, nil
 		}
 		m.text = fmt.Sprintf("Resource %s deleted", m.resource.Metadata().ID)
@@ -97,7 +91,12 @@ func (m *Model) Deleted() bool {
 	return m.deleted
 }
 
-func (m *Model) viewResource() string {
+func (m *Model) viewTitle() string {
+	modalStyle := m.state.Styles.Modal
+	return lipgloss.PlaceHorizontal(modalStyle.GetWidth()-modalStyle.GetHorizontalFrameSize(), lipgloss.Center, m.state.Styles.Title.Render(title))
+}
+
+func (m Model) viewResource() string {
 	metadata := m.resource.Metadata()
 	text := "Will delete " + strings.ToLower(metadata.Type.String()) + " " + metadata.Name
 	if metadata.Type != resource.TypeProject {
@@ -108,14 +107,19 @@ func (m *Model) viewResource() string {
 }
 
 func (m Model) View() string {
-	content := modalStyle.Render(lipgloss.JoinVertical(
-		lipgloss.Left,
-		lipgloss.PlaceHorizontal(modalStyle.GetWidth()-modalStyle.GetHorizontalFrameSize(), lipgloss.Center, m.state.Styles.Title.Render(title)),
-		m.text,
-		"\n",
-		m.viewResource(),
-		m.textInput.View(),
-	))
+	strs := []string{m.viewTitle()}
+	if m.errorMsg != "" {
+		strs = append(strs, m.state.Styles.Error.Render(m.errorMsg))
+	} else {
+		strs = append(strs, []string{
+			m.text,
+			"\n",
+			m.viewResource(),
+			m.textInput.View(),
+		}...)
+	}
+
+	content := m.state.Styles.Modal.Render(lipgloss.JoinVertical(lipgloss.Left, strs...))
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)
 }
 
@@ -123,8 +127,10 @@ func (m Model) View() string {
 type Model struct {
 	// textInput is the text input component.
 	textInput textinput.Model
-	// text to display.
+	// text is the text to display.
 	text string
+	// errorMsg is the error message to display.
+	errorMsg string
 	// state is the context.
 	state ui.ApplicationState
 	// resource is the resource to delete.

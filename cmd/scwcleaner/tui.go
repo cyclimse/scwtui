@@ -15,7 +15,6 @@ import (
 	"github.com/cyclimse/scaleway-dangling/internal/search/bleve"
 	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite"
 	"github.com/cyclimse/scaleway-dangling/internal/ui"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/keys"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/scenes"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"golang.org/x/sync/errgroup"
@@ -146,7 +145,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		ScwProfileName:    profileName,
 		ProjectIDsToNames: projectIDsToNames,
 
-		Keys:   keys.DefaultKeyMap(),
+		Keys:   ui.DefaultKeyMap(),
 		Styles: ui.DefaultStyles(),
 	}
 	m := scenes.Root(appState)
