@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/blevesearch/bleve/v2"
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 )
 
 func NewSearch(projectIDsToNames map[string]string) (*Search, error) {

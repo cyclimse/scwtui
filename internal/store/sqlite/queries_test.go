@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/resource/scaleway"
-	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource/scaleway"
+	"github.com/cyclimse/scwtui/internal/store/sqlite"
 	cockpit_sdk "github.com/scaleway/scaleway-sdk-go/api/cockpit/v1beta1"
 	fnc_sdk "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 	"github.com/scaleway/scaleway-sdk-go/scw"

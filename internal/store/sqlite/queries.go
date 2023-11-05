@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite/db"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/store/sqlite/db"
 )
 
 func (s *Store) GetResource(ctx context.Context, resourceID string) (resource.Resource, error) {

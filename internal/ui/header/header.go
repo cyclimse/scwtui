@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/cyclimse/scaleway-dangling/internal/ui"
+	"github.com/cyclimse/scwtui/internal/ui"
 )
 
 const MaxHeight = 3

@@ -3,7 +3,7 @@ package table
 import (
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/mattn/go-runewidth"
 )
 

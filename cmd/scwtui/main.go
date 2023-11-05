@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/cyclimse/scaleway-dangling/internal/config"
+	"github.com/cyclimse/scwtui/internal/config"
 )
 
 type CmdContext struct {

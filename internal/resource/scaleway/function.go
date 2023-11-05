@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
@@ -32,9 +32,9 @@ func (f Function) CockpitMetadata() resource.CockpitMetadata {
 	s := strings.TrimPrefix(f.DomainName, "https://")
 	resourceName := strings.Split(s, ".")[0]
 	return resource.CockpitMetadata{
-		CanViewLogs: true,
-		ResourceName:    resourceName,
-		ResourceType:    "serverless_function",
+		CanViewLogs:  true,
+		ResourceName: resourceName,
+		ResourceType: "serverless_function",
 	}
 }
 

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/resource/demo"
-	"github.com/cyclimse/scaleway-dangling/internal/resource/scaleway"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource/demo"
+	"github.com/cyclimse/scwtui/internal/resource/scaleway"
 )
 
 type ResourceUnmarshaler interface {

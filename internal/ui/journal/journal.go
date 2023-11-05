@@ -13,8 +13,8 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/ui"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/ui"
 	"github.com/mattn/go-runewidth"
 )
 

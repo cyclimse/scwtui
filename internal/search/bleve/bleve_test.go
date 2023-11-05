@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/resource/scaleway"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource/scaleway"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 	"github.com/stretchr/testify/require"
 )

@@ -3,7 +3,7 @@ package discovery
 import (
 	"context"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 )
 
 type ResourceDiscoverer interface {

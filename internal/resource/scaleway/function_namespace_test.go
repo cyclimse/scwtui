@@ -4,9 +4,9 @@ package scaleway_test
 // 	"context"
 // 	"testing"
 
-// 	"github.com/cyclimse/scaleway-dangling/internal/resource"
-// 	"github.com/cyclimse/scaleway-dangling/internal/resource/scaleway"
-// 	"github.com/cyclimse/scaleway-dangling/internal/testhelpers"
+// 	"github.com/cyclimse/scwtui/internal/resource"
+// 	"github.com/cyclimse/scwtui/internal/resource/scaleway"
+// 	"github.com/cyclimse/scwtui/internal/testhelpers"
 // 	sdk "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
 // 	"github.com/scaleway/scaleway-sdk-go/scw"
 // 	"github.com/stretchr/testify/assert"

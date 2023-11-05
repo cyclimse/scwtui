@@ -3,7 +3,7 @@ package testhelpers
 import (
 	"context"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 

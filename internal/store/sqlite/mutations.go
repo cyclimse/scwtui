@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite/db"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/store/sqlite/db"
 )
 
 // Store implements resource.Storer.

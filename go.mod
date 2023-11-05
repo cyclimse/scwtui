@@ -1,4 +1,4 @@
-module github.com/cyclimse/scaleway-dangling
+module github.com/cyclimse/scwtui
 
 go 1.21.1
 
@@ -101,7 +101,7 @@ require (
 	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/grafana/loki v1.6.1
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/sync v0.4.0

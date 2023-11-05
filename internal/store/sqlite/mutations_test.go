@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite"
-	"github.com/cyclimse/scaleway-dangling/internal/testhelpers"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/store/sqlite"
+	"github.com/cyclimse/scwtui/internal/testhelpers"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

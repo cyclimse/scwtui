@@ -9,14 +9,14 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/ui"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/confirm"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/describe"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/header"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/journal"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/search"
-	"github.com/cyclimse/scaleway-dangling/internal/ui/table"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/ui"
+	"github.com/cyclimse/scwtui/internal/ui/confirm"
+	"github.com/cyclimse/scwtui/internal/ui/describe"
+	"github.com/cyclimse/scwtui/internal/ui/header"
+	"github.com/cyclimse/scwtui/internal/ui/journal"
+	"github.com/cyclimse/scwtui/internal/ui/search"
+	"github.com/cyclimse/scwtui/internal/ui/table"
 )
 
 func Root(state ui.ApplicationState) tea.Model {

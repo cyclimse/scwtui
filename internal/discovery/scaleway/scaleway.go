@@ -9,7 +9,7 @@ import (
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 )
 
 const (

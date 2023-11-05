@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/grafana/loki/pkg/loghttp"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/cockpit/v1beta1"
 	"github.com/scaleway/scaleway-sdk-go/scw"

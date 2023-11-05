@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite"
+	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/cyclimse/scwtui/internal/store/sqlite"
 	"github.com/stretchr/testify/require"
 )
 

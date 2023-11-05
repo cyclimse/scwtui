@@ -3,8 +3,8 @@ package scaleway
 import (
 	"context"
 
-	"github.com/cyclimse/scaleway-dangling/internal/resource"
-	"github.com/scaleway/scaleway-sdk-go/api/iam/v1alpha1"
+	"github.com/cyclimse/scwtui/internal/resource"
+	iam "github.com/scaleway/scaleway-sdk-go/api/iam/v1alpha1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
 
