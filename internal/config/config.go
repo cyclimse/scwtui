@@ -4,7 +4,7 @@ import "log/slog"
 
 type Config struct {
 	Logging struct {
-		Level   slog.Level `default:"INFO" enum:"DEBUG,INFO,WARN,ERROR" help:"Log level"`
+		Level   slog.Level `default:"INFO"            enum:"DEBUG,INFO,WARN,ERROR" help:"Log level"`
 		LogFile string     `default:"/tmp/scwtui.log" help:"File to write logs to"`
 	} `embed:"" prefix:"log-"`
 	Scaleway `embed:""`

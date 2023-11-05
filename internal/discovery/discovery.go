@@ -8,5 +8,5 @@ import (
 
 type ResourceDiscoverer interface {
 	// Discover discovers resources and sends them to the given channel.
-	Discover(context.Context, chan resource.Resource) error
+	Discover(ctx context.Context, r chan resource.Resource) error
 }

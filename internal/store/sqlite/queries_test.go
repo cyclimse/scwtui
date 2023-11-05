@@ -84,6 +84,7 @@ func TestStore(t *testing.T) {
 	}
 }
 
+// nolint:funlen // this is a test
 func TestStore_ListResourcesByIDs(t *testing.T) {
 	ctx := context.Background()
 	store, err := sqlite.NewStore(ctx, t.TempDir())

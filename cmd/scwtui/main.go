@@ -36,7 +36,7 @@ func main() {
 }
 
 func initLogger(config config.Config) (*slog.Logger, error) {
-	w, err := os.OpenFile(config.Logging.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	w, err := os.OpenFile(config.Logging.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
 	if err != nil {
 		return nil, err
 	}

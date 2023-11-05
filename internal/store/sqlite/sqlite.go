@@ -6,9 +6,9 @@ import (
 	_ "embed"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
-
 	"github.com/cyclimse/scwtui/internal/store/sqlite/db"
+	//nolint:blankimport // sqlite3 driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 //go:embed schema.sql

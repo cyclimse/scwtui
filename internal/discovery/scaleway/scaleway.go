@@ -6,10 +6,9 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 	"golang.org/x/sync/errgroup"
-
-	"github.com/cyclimse/scwtui/internal/resource"
 )
 
 const (
@@ -17,10 +16,8 @@ const (
 	MaxRetries = 3
 )
 
-var (
-	// ErrShouldRetry is returned when the request should be retried.
-	ErrShouldRetry = errors.New("should retry")
-)
+// ErrShouldRetry is returned when the request should be retried.
+var ErrShouldRetry = errors.New("should retry")
 
 func NewResourceDiscoverer(client *scw.Client, projects []resource.Resource, config *ResourceDiscovererConfig) *ResourceDiscover {
 	return &ResourceDiscover{
@@ -118,6 +115,7 @@ func handleRequestError(err error) error {
 		return nil
 	}
 
+	// nolint:errorlint // will not be wrapped
 	if _, ok := err.(scw.SdkError); !ok {
 		slog.With("err", err).Error("got unexpected error")
 		return err

@@ -9,9 +9,7 @@ import (
 
 const widthOfAnUUID = 36
 
-// TODO: make this user-configurable
-// Right now, we are assuming the position is fixed
-// Maybe update to maps later?
+// nolint: gochecknoglobals
 var (
 	titles = []string{
 		"Status",
@@ -103,7 +101,7 @@ func (b *Build) buildRowsAlt(params BuildParams) []table.Row {
 	return rows
 }
 
-// TODO: reduce the magic numbers.
+// reduce the magic numbers.
 func (b *Build) buildCols(params BuildParams) []table.Column {
 	widthWithPadding := params.Width - 3
 	titles := titles

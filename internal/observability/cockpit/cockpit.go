@@ -27,10 +27,8 @@ const (
 	queryTemplateWithID = `{resource_id="%s", resource_type="%s"} |~ "^{.*}$" | json | line_format "{{.message}}"`
 )
 
-var (
-	// ErrCockpitNotActivated is returned when the cockpit is not activated for a project.
-	ErrCockpitNotActivated = fmt.Errorf("cockpit: cockpit not activated")
-)
+// ErrCockpitNotActivated is returned when the cockpit is not activated for a project.
+var ErrCockpitNotActivated = fmt.Errorf("cockpit: cockpit not activated")
 
 func NewCockpit(logger *slog.Logger, scwClient *scw.Client) *Cockpit {
 	return &Cockpit{

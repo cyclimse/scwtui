@@ -8,3 +8,12 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
+  reviewers:
+  - cyclimse
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    # Check for updates to GitHub Actions every week
+    interval: "weekly"
+  reviewers:
+  - cyclimse

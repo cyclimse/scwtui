@@ -5,10 +5,8 @@ import (
 	"errors"
 )
 
-var (
-	// ErrResourceNotFound is returned when a resource is not found.
-	ErrResourceNotFound = errors.New("store: resource not found")
-)
+// ErrResourceNotFound is returned when a resource is not found.
+var ErrResourceNotFound = errors.New("store: resource not found")
 
 type Predicate func(r Resource) bool
 

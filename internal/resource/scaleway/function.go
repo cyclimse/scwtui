@@ -15,7 +15,6 @@ type Function struct {
 }
 
 func (f Function) Metadata() resource.Metadata {
-
 	return resource.Metadata{
 		ID:          f.Function.ID,
 		Name:        f.Function.Name,

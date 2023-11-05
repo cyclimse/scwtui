@@ -23,6 +23,7 @@ type TuiCmd struct {
 	Demo bool `default:"false" help:"Run the TUI in demo mode"`
 }
 
+//nolint:funlen,gocognit // this is a command
 func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 	logger := cmdCtx.Logger
 

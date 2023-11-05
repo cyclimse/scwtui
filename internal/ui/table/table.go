@@ -50,10 +50,8 @@ const (
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
 
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch {
-		case key.Matches(msg, m.state.Keys.ToggleAltView):
+	if msg, ok := msg.(tea.KeyMsg); ok {
+		if key.Matches(msg, m.state.Keys.ToggleAltView) {
 			m.toggleAltView()
 			return m, cmd
 		}

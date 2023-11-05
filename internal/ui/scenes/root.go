@@ -62,6 +62,7 @@ func (m Model) Init() tea.Cmd {
 	)
 }
 
+//nolint:funlen,gocognit // will address this later.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
