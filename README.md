@@ -12,7 +12,7 @@ It allows you to view all the resources in your Scaleway account and perform bas
 The easiest way to run `scwtui` is to use Docker.
 
 ```bash
-docker run -it --rm -v "$HOME/.config/scw:/root/.config/scw" cyclimse/scwtui:v0.1.0
+docker run -it --rm -v "$HOME/.config/scw:/root/.config/scw" cyclimse/scwtui:0.1.0
 ```
 
 ## Keybindings

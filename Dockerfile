@@ -12,7 +12,7 @@ RUN apk add -U --no-cache \
 # for some reason, zig 0.11.0 can't compile sqlite3, I had to downgrade to 0.10.1
 RUN wget -qO- https://ziglang.org/download/${ZIG_RELEASE}/zig-linux-x86_64-${ZIG_RELEASE}.tar.xz | tar -xJ -C /opt
 
-ENV CC="/opt/zig-linux-x86_64-${ZIG_RELEASE}/zig cc -target native-native-musl"
+ENV CC="/opt/zig-linux-x86_64-${ZIG_RELEASE}/zig cc"
 
 COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
