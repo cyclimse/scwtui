@@ -1,7 +1,5 @@
 FROM golang:1.21-alpine3.17 AS builder
 
-ARG ZIG_RELEASE="0.10.1"
-
 WORKDIR /src
 
 # install git to inject version into binary
