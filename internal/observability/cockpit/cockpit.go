@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/cyclimse/scwtui/internal/resource"
-	"github.com/grafana/loki/pkg/loghttp"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/cockpit/v1beta1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
@@ -93,16 +92,40 @@ func (c *Cockpit) Logs(ctx context.Context, r resource.Resource) ([]resource.Log
 	return c.parseLogs(resp)
 }
 
+type QueryResponse struct {
+	Status string            `json:"status"`
+	Data   QueryResponseData `json:"data"`
+}
+
+type QueryResponseData struct {
+	ResultType string `json:"resultType"`
+	// We only support stream result type for now.
+	Result Streams `json:"result"`
+}
+
+type Streams []Stream
+
+type Stream struct {
+	Stream  StreamMetadata `json:"stream"`
+	Entries []Entry        `json:"values"`
+}
+
+type StreamMetadata struct {
+	ResourceID   string `json:"resource_id"`
+	ResourceName string `json:"resource_name"`
+	ResourceType string `json:"resource_type"`
+}
+
 func (c *Cockpit) parseLogs(resp *http.Response) ([]resource.Log, error) {
-	var r loghttp.QueryResponse
+	var r QueryResponse
 	err := json.NewDecoder(resp.Body).Decode(&r)
 	if err != nil {
 		return nil, fmt.Errorf("cockpit: unable to decode response: %w", err)
 	}
 
 	switch r.Data.ResultType {
-	case loghttp.ResultTypeStream:
-		streams := r.Data.Result.(loghttp.Streams)
+	case "streams":
+		streams := r.Data.Result
 		logs := make([]resource.Log, 0, len(streams))
 
 		for _, stream := range streams {

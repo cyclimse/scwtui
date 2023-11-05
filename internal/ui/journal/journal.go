@@ -139,6 +139,11 @@ func (m Model) viewHeader() string {
 	return header
 }
 
+func (m *Model) SetDimensions(width, height int) {
+	m.viewport.Width = width
+	m.viewport.Height = height
+}
+
 // Model is the model for the confirm component.
 type Model struct {
 	// errorMsg is the error message to display.
