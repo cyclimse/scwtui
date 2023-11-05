@@ -60,4 +60,4 @@ This requires your API key to have the `ObservabilityFullAccess` permission set 
 | Serverless Function  | ✅    | ✅        | ✅      | ✅    |
 | Serverless Container | ✅    | ✅        | ✅      | ✅    |
 | Registry Namespace   | ✅    | ✅        | ✅      | ❌    |
-| RDB Instance         | ✅    | ✅        | ✅      | ❌    |
+| RDB Instance         | ✅    | ✅        | ✅      | ✅    |

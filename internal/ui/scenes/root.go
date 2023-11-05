@@ -91,6 +91,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			return m, tea.Quit
+		case msg.Type == tea.KeyEnter:
+			// allows natural navigation after a search.
+			if m.focused == ui.SearchFocused {
+				m.setFocused(ui.TableFocused)
+				return m, nil
+			}
 		case msg.Type == tea.KeyTab:
 			cmd = m.focusNext()
 			return m, cmd
