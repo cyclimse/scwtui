@@ -243,6 +243,7 @@ func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
 
 	// Resize the other components to the table's dimensions.
 	m.describe.SetDimensions(w-fullViewExtraPaddding, h+fullViewExtraHeight)
+	m.journal.SetDimensions(w-fullViewExtraPaddding, h+fullViewExtraHeight)
 	return m
 }
 
