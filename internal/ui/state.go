@@ -23,4 +23,7 @@ type ApplicationState struct {
 	Keys KeyMap
 
 	Styles Styles
+
+	// The theme to use for syntax highlighting.
+	SyntaxHighlighterTheme string
 }

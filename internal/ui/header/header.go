@@ -2,6 +2,7 @@ package header
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
@@ -34,7 +35,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.width = msg.Width
 		// If we set a width on the help menu it can gracefully truncate
 		// its view as needed.
-		m.help.Width = msg.Width / 2
+		m.help.Width = int(math.Floor(float64(msg.Width) * 0.75))
 		return m, cmd
 	}
 	m.help, cmd = m.help.Update(msg)

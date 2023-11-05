@@ -12,6 +12,7 @@ import (
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
 	"github.com/cyclimse/scaleway-dangling/internal/ui"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/confirm"
+	"github.com/cyclimse/scaleway-dangling/internal/ui/describe"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/header"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/journal"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/search"
@@ -21,10 +22,11 @@ import (
 func Root(state ui.ApplicationState) tea.Model {
 	m := Model{
 		state:   state,
-		header:  header.Header(ui.TableFocused, state),
-		search:  search.Search(state),
-		table:   table.Table(state.ProjectIDsToNames),
 		focused: ui.TableFocused,
+
+		header: header.Header(ui.TableFocused, state),
+		search: search.Search(state),
+		table:  table.Table(state.ProjectIDsToNames),
 	}
 	m.setFocused(m.focused)
 	return &m
@@ -57,7 +59,6 @@ func (m Model) Init() tea.Cmd {
 		m.header.Init(),
 		m.search.Init(),
 		m.table.Init(),
-		m.confirm.Init(),
 	)
 }
 
@@ -87,7 +88,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.state.Keys.Quit):
-			if m.focused == ui.ConfirmFocused || m.focused == ui.JournalFocused {
+			if m.focused != ui.TableFocused {
 				m.setFocused(ui.TableFocused)
 				return m, nil
 			}
@@ -107,6 +108,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			return m, cmd
+		case ui.DescribeFocused:
+			m.describe, cmd = m.describe.Update(msg)
+			return m, cmd
 		case ui.ConfirmFocused:
 			m.confirm, cmd = m.confirm.Update(msg)
 			return m, cmd
@@ -116,10 +120,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch {
+		case key.Matches(msg, m.state.Keys.Search):
+			cmd = m.setFocused(ui.SearchFocused)
+			return m, cmd
+		case key.Matches(msg, m.state.Keys.Describe):
+			if m.focused == ui.TableFocused {
+				cmd = m.setFocused(ui.DescribeFocused)
+				return m, cmd
+			}
 		case key.Matches(msg, m.state.Keys.Delete):
 			if m.focused == ui.TableFocused {
-				m.setFocused(ui.ConfirmFocused)
-				return m, nil
+				cmd = m.setFocused(ui.ConfirmFocused)
+				return m, cmd
 			}
 		case key.Matches(msg, m.state.Keys.Logs):
 			if m.focused == ui.TableFocused {
@@ -129,9 +141,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, cmd
 				}
 			}
-		case key.Matches(msg, m.state.Keys.Search):
-			cmd = m.setFocused(ui.SearchFocused)
-			return m, cmd
 		case key.Matches(msg, m.state.Keys.ToggleAltView):
 			m.table.ToggleAltView()
 			return m, nil
@@ -146,6 +155,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch m.focused {
 	case ui.SearchFocused:
 		m.search, cmd = m.search.Update(msg)
+	case ui.DescribeFocused:
+		m.describe, cmd = m.describe.Update(msg)
 	case ui.ConfirmFocused:
 		m.confirm, cmd = m.confirm.Update(msg)
 		if m.confirm.Deleted() {
@@ -174,6 +185,8 @@ func (m Model) View() string {
 		b.WriteString(m.search.View())
 		b.WriteString("\n")
 		b.WriteString(m.table.View())
+	case ui.DescribeFocused:
+		b.WriteString(m.describe.View())
 	case ui.ConfirmFocused:
 		b.WriteString("\n\n")
 		b.WriteString(lipgloss.PlaceHorizontal(m.table.Width(), lipgloss.Center, m.confirm.View()))
@@ -187,6 +200,11 @@ func (m *Model) focusNext() tea.Cmd {
 	return m.setFocused(ui.ViewsSwitchableByTab[(int(m.focused)+1)%len(ui.ViewsSwitchableByTab)])
 }
 
+const (
+	fullViewExtraHeight   = 2
+	fullViewExtraPaddding = 2
+)
+
 func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 	m.focused = focused
 	m.header.SetFocused(focused)
@@ -197,14 +215,17 @@ func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 	case ui.SearchFocused:
 		m.table.Blur()
 		return m.search.Focus()
+	case ui.DescribeFocused:
+		m.table.Blur()
+		m.describe = describe.Describe(m.state, m.table.SelectedResource(), m.table.Width()-fullViewExtraPaddding, m.table.Height()+fullViewExtraHeight)
+		return m.describe.Init()
 	case ui.ConfirmFocused:
 		m.table.Blur()
 		m.confirm = confirm.Confirm(m.state, m.table.SelectedResource(), m.table.Width(), m.table.Height())
+		return m.confirm.Init()
 	case ui.JournalFocused:
 		m.table.Blur()
-		// add exta height to account for table header and border
-		const extraHeight = 2
-		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width()-2, m.table.Height()+extraHeight)
+		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width()-fullViewExtraPaddding, m.table.Height()+fullViewExtraHeight)
 		return m.journal.Init()
 	}
 
@@ -213,10 +234,12 @@ func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 
 type Model struct {
 	state   ui.ApplicationState
-	header  header.Model
-	search  search.Model
-	table   table.Model
-	confirm confirm.Model
-	journal journal.Model
 	focused ui.Focused
+
+	header   header.Model
+	search   search.Model
+	describe describe.Model
+	table    table.Model
+	confirm  confirm.Model
+	journal  journal.Model
 }

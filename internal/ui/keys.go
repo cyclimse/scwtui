@@ -17,21 +17,25 @@ func DefaultKeyMap() KeyMap {
 		RootKeyMap: defaultRootKeyMap,
 		TableKeyMap: TableKeyMap{
 			RootKeyMap: defaultRootKeyMap,
-			Delete: key.NewBinding(
+			Search: key.NewBinding(
+				key.WithKeys("/"),
+				key.WithHelp("/", "search"),
+			),
+			Describe: key.NewBinding(
 				key.WithKeys("d"),
-				key.WithHelp("d", "delete"),
+				key.WithHelp("d", "describe"),
 			),
 			Logs: key.NewBinding(
 				key.WithKeys("l"),
 				key.WithHelp("l", "logs"),
 			),
+			Delete: key.NewBinding(
+				key.WithKeys("x"),
+				key.WithHelp("x", "delete"),
+			),
 			ToggleAltView: key.NewBinding(
 				key.WithKeys("g"),
-				key.WithHelp("g", "toggle view"),
-			),
-			Search: key.NewBinding(
-				key.WithKeys("/"),
-				key.WithHelp("/", "search"),
+				key.WithHelp("g", "view ids"),
 			),
 		},
 		ConfirmKeyMap: ConfirmKeyMap{
@@ -77,15 +81,17 @@ func (m RootKeyMap) FullHelp() [][]key.Binding {
 
 type TableKeyMap struct {
 	RootKeyMap
-	Delete        key.Binding
-	Logs          key.Binding
-	ToggleAltView key.Binding
 	Search        key.Binding
+	Describe      key.Binding
+	Logs          key.Binding
+	Delete        key.Binding
+	ToggleAltView key.Binding
 }
 
 func (m TableKeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		m.Search,
+		m.Describe,
 		m.Logs,
 		m.Delete,
 		m.ToggleAltView,

@@ -9,6 +9,7 @@ type Focused int
 const (
 	TableFocused Focused = iota
 	SearchFocused
+	DescribeFocused
 	ConfirmFocused
 	JournalFocused
 	NumViews // The number of views in the app

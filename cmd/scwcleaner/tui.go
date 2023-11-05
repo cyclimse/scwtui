@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cyclimse/scaleway-dangling/internal/discovery"
@@ -25,10 +24,7 @@ type TuiCmd struct {
 }
 
 func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
-	logger, err := initLogger()
-	if err != nil {
-		return err
-	}
+	logger := cmdCtx.Logger
 
 	p, err := loadScalewayProfile(cmdCtx.Profile)
 	if err != nil {
@@ -145,8 +141,10 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		ScwProfileName:    profileName,
 		ProjectIDsToNames: projectIDsToNames,
 
-		Keys:   ui.DefaultKeyMap(),
-		Styles: ui.DefaultStyles(),
+		Keys: ui.DefaultKeyMap(),
+
+		Styles:                 ui.DefaultStyles(),
+		SyntaxHighlighterTheme: cmdCtx.Config.Tui.Theme,
 	}
 	m := scenes.Root(appState)
 
@@ -166,16 +164,6 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 	}
 
 	return nil
-}
-
-func initLogger() (*slog.Logger, error) {
-	w, err := os.OpenFile("scaleway-dangling.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return nil, err
-	}
-
-	loggerHandler := slog.NewJSONHandler(w, nil)
-	return slog.New(loggerHandler), nil
 }
 
 func loadScalewayProfile(profileName string) (*scw.Profile, error) {
