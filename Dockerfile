@@ -23,6 +23,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 FROM alpine:3.17
 
+# this is needed for the colors to display correctly
+ENV TERM="xterm-256color"
+
 RUN apk add -U --no-cache ca-certificates
 
 COPY --from=builder /scwtui /scwtui

@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	tokenName = "scaleway-dangling"
+	tokenName = "scwtui"
 
 	// queryTemplateWithName is the template used to query logs from Loki.
 	queryTemplateWithName = `{resource_name="%s", resource_type="%s"} |~ "^{.*}$" | json | line_format "{{.message}}"`
