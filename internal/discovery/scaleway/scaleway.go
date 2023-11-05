@@ -19,8 +19,9 @@ const (
 // ErrShouldRetry is returned when the request should be retried.
 var ErrShouldRetry = errors.New("should retry")
 
-func NewResourceDiscoverer(client *scw.Client, projects []resource.Resource, config *ResourceDiscovererConfig) *ResourceDiscover {
+func NewResourceDiscoverer(logger *slog.Logger, client *scw.Client, projects []resource.Resource, config *ResourceDiscovererConfig) *ResourceDiscover {
 	return &ResourceDiscover{
+		logger:    logger,
 		client:    client,
 		config:    config,
 		requested: make(chan requestResources, 1000),
@@ -29,6 +30,8 @@ func NewResourceDiscoverer(client *scw.Client, projects []resource.Resource, con
 }
 
 type ResourceDiscover struct {
+	logger *slog.Logger
+
 	client *scw.Client
 	config *ResourceDiscovererConfig
 
@@ -99,10 +102,10 @@ func (d *ResourceDiscover) runWorker(ctx context.Context, ch chan resource.Resou
 					}
 					return err
 				}
-				slog.With("err", err).Error("failed to get resources")
+				d.logger.With("err", err).Error("discover: failed to get resources")
 			}
 
-			// slog.With("resource", resources).Info("got resource")
+			d.logger.Info("discover: got resources", slog.Int("num_resources", len(resources)))
 			for _, r := range resources {
 				ch <- r
 			}
@@ -117,7 +120,6 @@ func handleRequestError(err error) error {
 
 	// nolint:errorlint // will not be wrapped
 	if _, ok := err.(scw.SdkError); !ok {
-		slog.With("err", err).Error("got unexpected error")
 		return err
 	}
 

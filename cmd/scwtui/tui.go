@@ -61,7 +61,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 			return err
 		}
 
-		discoverer = scaleway.NewResourceDiscoverer(client, projects, &scaleway.ResourceDiscovererConfig{
+		discoverer = scaleway.NewResourceDiscoverer(logger, client, projects, &scaleway.ResourceDiscovererConfig{
 			NumWorkers: 10,
 		})
 	}
