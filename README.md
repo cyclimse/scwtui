@@ -1,8 +1,7 @@
 # scwtui
 
 > **Note**
-> Not an official project of Scaleway. This is a personal project.
-> This is a work in progress.
+> Not an official Scaleway project, use at your own risk.
 
 `scwtui` is a terminal user interface for Scaleway powered by [bubbletea](https://github.com/charmbracelet/bubbletea). Inspired by [k9s](https://k9scli.io/).
 
