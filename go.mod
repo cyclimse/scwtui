@@ -3,14 +3,14 @@ module github.com/cyclimse/scwtui
 go 1.21.1
 
 require (
+	github.com/alecthomas/chroma/v2 v2.10.0
 	github.com/brianvoe/gofakeit/v6 v6.24.0
-	github.com/charmbracelet/bubbletea v0.24.1
+	github.com/charmbracelet/bubbletea v0.24.2
 	github.com/mattn/go-runewidth v0.0.15
 )
 
 require (
 	github.com/RoaringBitmap/roaring v1.2.3 // indirect
-	github.com/alecthomas/chroma/v2 v2.10.0 // indirect
 	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
