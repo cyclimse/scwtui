@@ -32,7 +32,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		return err
 	}
 
-	store, err := sqlite.NewStore(context.Background(), "scaleway-dangling.db")
+	store, err := sqlite.NewStore(context.Background(), "scwtui.db")
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		discoverer = demoDiscovery
 		store.SetUnmarshaller(&sqlite.DemoResourceUnmarshal{})
 	} else {
-		client, err = scw.NewClient(scw.WithUserAgent("scaleway-dangling"), scw.WithProfile(p))
+		client, err = scw.NewClient(scw.WithUserAgent("scwtui"), scw.WithProfile(p))
 		if err != nil {
 			return err
 		}
