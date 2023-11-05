@@ -14,6 +14,7 @@ type ApplicationState struct {
 	Logger            *slog.Logger
 	Store             resource.Storer
 	Search            resource.Searcher
+	Monitor           resource.Monitorer
 	ScwClient         *scw.Client
 	ScwProfileName    string
 	Keys              keys.KeyMap

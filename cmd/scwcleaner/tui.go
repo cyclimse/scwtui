@@ -10,6 +10,7 @@ import (
 	"github.com/cyclimse/scaleway-dangling/internal/discovery"
 	"github.com/cyclimse/scaleway-dangling/internal/discovery/demo"
 	"github.com/cyclimse/scaleway-dangling/internal/discovery/scaleway"
+	"github.com/cyclimse/scaleway-dangling/internal/observability/cockpit"
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
 	"github.com/cyclimse/scaleway-dangling/internal/search/bleve"
 	"github.com/cyclimse/scaleway-dangling/internal/store/sqlite"
@@ -136,6 +137,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		Search:            search,
 		ScwClient:         client,
 		ScwProfileName:    profileName,
+		Monitor:           cockpit.NewCockpit(logger, client),
 		Keys:              keys.DefaultKeyMap(),
 		ProjectIDsToNames: projectIDsToNames,
 	}

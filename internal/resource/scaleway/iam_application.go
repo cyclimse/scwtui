@@ -23,6 +23,12 @@ func (app IAMApplication) Metadata() resource.Metadata {
 	}
 }
 
+func (app IAMApplication) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs: false,
+	}
+}
+
 func (app IAMApplication) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := iam.NewAPI(client)
 	err := api.DeleteApplication(&iam.DeleteApplicationRequest{

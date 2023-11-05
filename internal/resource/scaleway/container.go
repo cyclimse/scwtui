@@ -2,6 +2,7 @@ package scaleway
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/container/v1beta1"
@@ -13,16 +14,26 @@ type Container struct {
 	Namespace     sdk.Namespace `json:"namespace"`
 }
 
-func (f Container) Metadata() resource.Metadata {
+func (c Container) Metadata() resource.Metadata {
 	return resource.Metadata{
-		ID:          f.Container.ID,
-		Name:        f.Container.Name,
-		ProjectID:   f.Namespace.ProjectID,
-		Status:      statusPtr(f.Container.Status),
-		Description: f.Container.Description,
+		ID:          c.Container.ID,
+		Name:        c.Container.Name,
+		ProjectID:   c.Namespace.ProjectID,
+		Status:      statusPtr(c.Container.Status),
+		Description: c.Container.Description,
 		Tags:        nil,
 		Type:        resource.TypeContainer,
-		Locality:    resource.Region(f.Container.Region),
+		Locality:    resource.Region(c.Container.Region),
+	}
+}
+
+func (f Container) CockpitMetadata() resource.CockpitMetadata {
+	s := strings.TrimPrefix(f.DomainName, "https://")
+	resourceName := strings.Split(s, ".")[0]
+	return resource.CockpitMetadata{
+		CanViewLogs:  true,
+		ResourceName: resourceName,
+		ResourceType: "serverless_container",
 	}
 }
 

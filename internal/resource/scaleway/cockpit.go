@@ -23,6 +23,12 @@ func (c Cockpit) Metadata() resource.Metadata {
 	}
 }
 
+func (c Cockpit) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs: false,
+	}
+}
+
 func (c Cockpit) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeactivateCockpit(&sdk.DeactivateCockpitRequest{

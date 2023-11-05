@@ -2,6 +2,7 @@ package scaleway
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/function/v1beta1"
@@ -14,6 +15,7 @@ type Function struct {
 }
 
 func (f Function) Metadata() resource.Metadata {
+
 	return resource.Metadata{
 		ID:          f.Function.ID,
 		Name:        f.Function.Name,
@@ -23,6 +25,16 @@ func (f Function) Metadata() resource.Metadata {
 		Tags:        nil,
 		Type:        resource.TypeFunction,
 		Locality:    resource.Region(f.Function.Region),
+	}
+}
+
+func (f Function) CockpitMetadata() resource.CockpitMetadata {
+	s := strings.TrimPrefix(f.DomainName, "https://")
+	resourceName := strings.Split(s, ".")[0]
+	return resource.CockpitMetadata{
+		CanViewLogs: true,
+		ResourceName:    resourceName,
+		ResourceType:    "serverless_function",
 	}
 }
 

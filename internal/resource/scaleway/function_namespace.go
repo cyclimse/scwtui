@@ -23,6 +23,12 @@ func (ns FunctionNamespace) Metadata() resource.Metadata {
 	}
 }
 
+func (ns FunctionNamespace) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs: false,
+	}
+}
+
 func (ns FunctionNamespace) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeleteNamespace(&sdk.DeleteNamespaceRequest{

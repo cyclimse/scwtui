@@ -2,3 +2,6 @@
 
 # Ignore all log files
 *.log
+
+# Ignore e2e tests for now (TODO: remove this)
+tests/

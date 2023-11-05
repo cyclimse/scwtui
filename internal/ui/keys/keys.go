@@ -18,6 +18,10 @@ func DefaultKeyMap() KeyMap {
 			key.WithKeys("d"),
 			key.WithHelp("d", "delete resource"),
 		),
+		Logs: key.NewBinding(
+			key.WithKeys("l"),
+			key.WithHelp("l", "view logs"),
+		),
 		ToggleAltView: key.NewBinding(
 			key.WithKeys("g"),
 			key.WithHelp("g", "toggle alternative view"),
@@ -33,6 +37,7 @@ type KeyMap struct {
 	Help          key.Binding
 	Quit          key.Binding
 	Delete        key.Binding
+	Logs          key.Binding
 	ToggleAltView key.Binding
 	Search        key.Binding
 }

@@ -23,6 +23,12 @@ func (ns RegistryNamespace) Metadata() resource.Metadata {
 	}
 }
 
+func (ns RegistryNamespace) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs: false,
+	}
+}
+
 func (ns RegistryNamespace) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := registry.NewAPI(client)
 	_, err := api.DeleteNamespace(&registry.DeleteNamespaceRequest{

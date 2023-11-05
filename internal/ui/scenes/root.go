@@ -13,6 +13,7 @@ import (
 	"github.com/cyclimse/scaleway-dangling/internal/ui"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/confirm"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/header"
+	"github.com/cyclimse/scaleway-dangling/internal/ui/journal"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/search"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/table"
 )
@@ -23,6 +24,7 @@ const (
 	tableFocus Focus = iota
 	searchFocus
 	confirmFocus
+	journalFocus
 	numViews // The number of views in the app
 )
 
@@ -97,7 +99,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.state.Keys.Quit):
-			if m.focusedView == confirmFocus {
+			if m.focusedView == confirmFocus || m.focusedView == journalFocus {
 				m.setFocused(tableFocus)
 				return m, nil
 			}
@@ -123,6 +125,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.setFocused(tableFocus)
 			}
 			return m, cmd
+		case journalFocus:
+			m.journal, cmd = m.journal.Update(msg)
+			return m, cmd
 		}
 
 		switch {
@@ -133,6 +138,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.focusedView == tableFocus {
 				m.setFocused(confirmFocus)
 				return m, nil
+			}
+		case key.Matches(msg, m.state.Keys.Logs):
+			if m.focusedView == tableFocus {
+				canViewLogs := m.table.SelectedResource().CockpitMetadata().CanViewLogs
+				if canViewLogs {
+					cmd = m.setFocused(journalFocus)
+					return m, cmd
+				}
 			}
 		case key.Matches(msg, m.state.Keys.Search):
 			cmd = m.setFocused(searchFocus)
@@ -163,6 +176,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}),
 			)
 		}
+	case journalFocus:
+		m.journal, cmd = m.journal.Update(msg)
 	}
 
 	return m, cmd
@@ -180,6 +195,8 @@ func (m Model) View() string {
 	case confirmFocus:
 		b.WriteString("\n\n")
 		b.WriteString(lipgloss.PlaceHorizontal(m.table.Width(), lipgloss.Center, m.confirm.View()))
+	case journalFocus:
+		b.WriteString(m.journal.View())
 	}
 	return b.String()
 }
@@ -199,6 +216,12 @@ func (m *Model) setFocused(focused Focus) tea.Cmd {
 	case confirmFocus:
 		m.table.Blur()
 		m.confirm = confirm.Confirm(m.state, m.table.SelectedResource(), m.table.Width(), m.table.Height())
+	case journalFocus:
+		m.table.Blur()
+		// add exta height to account for table header and border
+		const extraHeight = 5
+		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width(), m.table.Height()+extraHeight)
+		return m.journal.Init()
 	}
 
 	return nil
@@ -210,5 +233,6 @@ type Model struct {
 	search      search.Model
 	table       table.Model
 	confirm     confirm.Model
+	journal     journal.Model
 	focusedView Focus
 }

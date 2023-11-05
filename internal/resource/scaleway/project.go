@@ -23,6 +23,12 @@ func (p Project) Metadata() resource.Metadata {
 	}
 }
 
+func (p Project) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs: false,
+	}
+}
+
 func (p Project) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewProjectAPI(client)
 	err := api.DeleteProject(&sdk.ProjectAPIDeleteProjectRequest{

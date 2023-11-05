@@ -23,6 +23,14 @@ func (i RdbInstance) Metadata() resource.Metadata {
 	}
 }
 
+func (i RdbInstance) CockpitMetadata() resource.CockpitMetadata {
+	return resource.CockpitMetadata{
+		CanViewLogs:  true,
+		ResourceID:   i.ID,
+		ResourceType: "rdb_instance_postgresql",
+	}
+}
+
 func (i RdbInstance) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := rdb.NewAPI(client)
 	_, err := api.DeleteInstance(&rdb.DeleteInstanceRequest{
