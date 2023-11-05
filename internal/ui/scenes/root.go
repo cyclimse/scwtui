@@ -26,7 +26,7 @@ func Root(state ui.ApplicationState) tea.Model {
 
 		header: header.Header(ui.TableFocused, state),
 		search: search.Search(state),
-		table:  table.Table(state.ProjectIDsToNames),
+		table:  table.Table(state),
 	}
 	m.setFocused(m.focused)
 	return &m
@@ -67,9 +67,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.header, _ = m.header.Update(msg)
-		m.table, _ = m.table.Update(msg)
-		return m, nil
+		return m.updateWindowsResize(msg), nil
 	case []resource.Resource:
 		// if the search input is dirty, don't update the table.
 		if !m.search.Dirty() {
@@ -141,9 +139,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, cmd
 				}
 			}
-		case key.Matches(msg, m.state.Keys.ToggleAltView):
-			m.table.ToggleAltView()
-			return m, nil
 		}
 
 		m.setFocused(ui.TableFocused)
@@ -230,6 +225,18 @@ func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 	}
 
 	return nil
+}
+
+func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
+	m.header.SetWidth(msg.Width)
+	m.table.SetDimensions(msg.Width, msg.Height)
+
+	w := m.table.Width()
+	h := m.table.Height()
+
+	// Resize the other components to the table's dimensions.
+	m.describe.SetDimensions(w-fullViewExtraPaddding, h+fullViewExtraHeight)
+	return m
 }
 
 type Model struct {

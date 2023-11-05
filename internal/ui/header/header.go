@@ -30,14 +30,6 @@ func (m Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		m.width = msg.Width
-		// If we set a width on the help menu it can gracefully truncate
-		// its view as needed.
-		m.help.Width = int(math.Floor(float64(msg.Width) * 0.75))
-		return m, cmd
-	}
 	m.help, cmd = m.help.Update(msg)
 	return m, cmd
 }
@@ -66,6 +58,11 @@ func (m Model) View() string {
 			),
 		),
 	)
+}
+
+func (m *Model) SetWidth(width int) {
+	m.width = width
+	m.help.Width = int(math.Floor(float64(width) * 0.75))
 }
 
 func (m *Model) SetFocused(focused ui.Focused) {

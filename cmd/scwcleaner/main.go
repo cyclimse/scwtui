@@ -22,8 +22,16 @@ type CLI struct {
 
 func main() {
 	var cli CLI
+
 	ctx := kong.Parse(&cli)
-	err := ctx.Run(&CmdContext{Config: cli.Config})
+	cfg := cli.Config
+
+	logger, err := initLogger(cfg)
+	if err != nil {
+		ctx.FatalIfErrorf(err)
+	}
+
+	err = ctx.Run(&CmdContext{Config: cfg, Logger: logger})
 	ctx.FatalIfErrorf(err)
 }
 

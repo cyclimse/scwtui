@@ -50,7 +50,7 @@ func searchResources(state ui.ApplicationState, query string) tea.Cmd {
 			}
 		}
 
-		state.Logger.Info("search results", slog.Int("num_results", len(resourceIDs)))
+		state.Logger.Debug("search results", slog.Int("num_results", len(resourceIDs)), slog.String("query", query))
 
 		resources, err := state.Store.ListResourcesByIDs(ctx, resourceIDs)
 		if err != nil {

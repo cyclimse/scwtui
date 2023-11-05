@@ -85,6 +85,11 @@ func (m Model) View() string {
 	)
 }
 
+func (m *Model) SetDimensions(width, height int) {
+	m.viewport.Width = width
+	m.viewport.Height = height
+}
+
 type Model struct {
 	// state of the application
 	state ui.ApplicationState

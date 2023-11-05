@@ -1,10 +1,12 @@
 package table
 
 import (
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scaleway-dangling/internal/resource"
+	"github.com/cyclimse/scaleway-dangling/internal/ui"
 	"github.com/cyclimse/scaleway-dangling/internal/ui/header"
 )
 
@@ -17,7 +19,7 @@ var baseStyle = lipgloss.NewStyle().
 	BorderStyle(lipgloss.NormalBorder()).
 	BorderForeground(lipgloss.Color("240"))
 
-func Table(projectsIDsToNames map[string]string) Model {
+func Table(state ui.ApplicationState) Model {
 	s := table.DefaultStyles()
 	s.Header = s.Header.
 		BorderStyle(lipgloss.NormalBorder()).
@@ -32,9 +34,9 @@ func Table(projectsIDsToNames map[string]string) Model {
 	b := NewBuilder(s)
 
 	return Model{
-		builder:            b,
-		lastWidthBuilt:     defaultWidth,
-		projectsIDsToNames: projectsIDsToNames,
+		state:          state,
+		builder:        b,
+		lastWidthBuilt: defaultWidth,
 	}
 }
 
@@ -47,25 +49,23 @@ const (
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var cmd tea.Cmd
+
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		if msg.Width != m.lastWidthBuilt {
-			m.lastWidthBuilt = msg.Width - baseStyle.GetHorizontalFrameSize() - additionalHorizontalPadding
-			m.lastHeight = msg.Height - baseStyle.GetVerticalFrameSize() - header.MaxHeight - tableHeaderHeight
-			m.rebuildTable()
-			m.table.SetWidth(m.lastWidthBuilt + additionalHorizontalPadding)
-			m.table.SetHeight(m.lastHeight)
-		}
-		return m, cmd
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyF2:
-			m.ToggleAltView()
+		switch {
+		case key.Matches(msg, m.state.Keys.ToggleAltView):
+			m.toggleAltView()
 			return m, cmd
 		}
 	}
+
 	m.table, cmd = m.table.Update(msg)
 	return m, cmd
+}
+
+func (m *Model) toggleAltView() {
+	m.showingAltView = !m.showingAltView
+	m.rebuildTable()
 }
 
 func (m *Model) rebuildTable() {
@@ -83,7 +83,7 @@ func (m *Model) rebuildTable() {
 		Width:             m.lastWidthBuilt,
 		AltView:           m.showingAltView,
 		Resources:         m.resources,
-		ProjectIDsToNames: m.projectsIDsToNames,
+		ProjectIDsToNames: m.state.ProjectIDsToNames,
 	})
 
 	m.table.SetWidth(previous.width)
@@ -104,17 +104,22 @@ func (m Model) View() string {
 	return baseStyle.Render(m.table.View())
 }
 
-func (m *Model) ToggleAltView() {
-	m.showingAltView = !m.showingAltView
-	m.rebuildTable()
-}
-
 func (m *Model) Focus() {
 	m.table.Focus()
 }
 
 func (m *Model) Blur() {
 	m.table.Blur()
+}
+
+func (m *Model) SetDimensions(width, height int) {
+	if width != m.lastWidthBuilt {
+		m.lastWidthBuilt = width - baseStyle.GetHorizontalFrameSize() - additionalHorizontalPadding
+		m.lastHeight = height - baseStyle.GetVerticalFrameSize() - header.MaxHeight - tableHeaderHeight
+		m.rebuildTable()
+		m.table.SetWidth(m.lastWidthBuilt + additionalHorizontalPadding)
+		m.table.SetHeight(m.lastHeight)
+	}
 }
 
 func (m Model) Width() int {
@@ -129,8 +134,8 @@ type Model struct {
 	table   table.Model
 	builder *Build
 
-	resources          []resource.Resource
-	projectsIDsToNames map[string]string
+	resources []resource.Resource
+	state     ui.ApplicationState
 
 	lastWidthBuilt int
 	lastHeight     int
