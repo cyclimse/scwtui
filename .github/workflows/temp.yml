@@ -18,6 +18,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
       - name: sync dockerhub readme
         uses: ms-jpq/sync-dockerhub-readme@v1
         with:
