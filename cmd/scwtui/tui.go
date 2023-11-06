@@ -88,12 +88,60 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		}
 	}
 
+	profileName := cmdCtx.Profile
+	if profileName == "" {
+		profileName = "default"
+	}
+
+	appState := ui.ApplicationState{
+		Logger: logger,
+
+		Store:   store,
+		Search:  search,
+		Monitor: cockpit.NewCockpit(logger, client),
+
+		ScwClient:         client,
+		ScwProfileName:    profileName,
+		ProjectIDsToNames: projectIDsToNames,
+
+		Keys: ui.DefaultKeyMap(),
+
+		Styles:                 ui.DefaultStyles(),
+		SyntaxHighlighterTheme: cmdCtx.Config.Tui.Theme,
+	}
+	m := scenes.Root(appState)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	g := start(ctx, logger, discoverer, store, search)
+
+	g.Go(func() error {
+		if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
+			return err
+		}
+		cancel() // cancel the context after the ui has exited
+		return nil
+	})
+
+	if err = g.Wait(); err != nil {
+		if errors.Is(err, context.Canceled) {
+			return nil
+		}
+		return err
+	}
+
+	return nil
+}
+
+const (
+	channelBufferSize = 100
+)
+
+func start(ctx context.Context, logger *slog.Logger, discoverer discovery.ResourceDiscoverer, store resource.Storer, search resource.Searcher) *errgroup.Group {
 	g, runCtx := errgroup.WithContext(ctx)
 
-	ch := make(chan resource.Resource, 10000)
+	ch := make(chan resource.Resource, channelBufferSize)
 
 	g.Go(func() error {
 		err := discoverer.Discover(runCtx, ch)
@@ -126,45 +174,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		}
 	})
 
-	profileName := cmdCtx.Profile
-	if profileName == "" {
-		profileName = "default"
-	}
-
-	appState := ui.ApplicationState{
-		Logger: logger,
-
-		Store:   store,
-		Search:  search,
-		Monitor: cockpit.NewCockpit(logger, client),
-
-		ScwClient:         client,
-		ScwProfileName:    profileName,
-		ProjectIDsToNames: projectIDsToNames,
-
-		Keys: ui.DefaultKeyMap(),
-
-		Styles:                 ui.DefaultStyles(),
-		SyntaxHighlighterTheme: cmdCtx.Config.Tui.Theme,
-	}
-	m := scenes.Root(appState)
-
-	g.Go(func() error {
-		if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
-			return err
-		}
-		cancel()
-		return nil
-	})
-
-	err = g.Wait()
-	if err != nil {
-		if errors.Is(err, context.Canceled) {
-			return nil
-		}
-	}
-
-	return nil
+	return g
 }
 
 func loadScalewayProfile(profileName string) (*scw.Profile, error) {
@@ -173,17 +183,25 @@ func loadScalewayProfile(profileName string) (*scw.Profile, error) {
 		return nil, err
 	}
 
-	p, err := cfg.GetActiveProfile()
-	if err != nil {
-		return nil, err
-	}
+	var p *scw.Profile
 
 	if profileName != "" {
+		// if the profile is overridden via the command line,
+		// we load it directly
 		p, err = cfg.GetProfile(profileName)
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		// otherwise we load the active profile
+		p, err = cfg.GetActiveProfile()
+		if err != nil {
+			return nil, err
+		}
 	}
+
+	// finally, merge it with the environment variables overrides
+	p = scw.MergeProfiles(p, scw.LoadEnvProfile())
 
 	return p, nil
 }
