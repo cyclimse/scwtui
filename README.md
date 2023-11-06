@@ -1,9 +1,9 @@
 # scwtui
 
-> **Note**
+> **Warning**
 > Not an official Scaleway project, use at your own risk.
 
-`scwtui` is a terminal user interface for Scaleway powered by [bubbletea](https://github.com/charmbracelet/bubbletea). Inspired by [k9s](https://k9scli.io/).
+`scwtui` is a terminal user interface for Scaleway powered by [bubbletea](https://github.com/charmbracelet/bubbletea).
 
 It allows you to view all the resources in your Scaleway account and perform basic operations on them.
 
@@ -14,6 +14,8 @@ The easiest way to run `scwtui` is to use Docker.
 ```bash
 docker run -it --rm -v "$HOME/.config/scw:/root/.config/scw" cyclimse/scwtui:0.1.1
 ```
+
+You can also provide your Scaleway credentials using environment variables. See the [scaleway-cli](https://github.com/scaleway/scaleway-cli/blob/master/docs/commands/config.md) documentation for more information.
 
 ## Keybindings
 
@@ -48,9 +50,7 @@ You can delete a resource by pressing `x` when it is selected. This will prompt 
 
 You can view the logs for a resource by pressing `l` when it is selected. This will open a new window with the logs for the resource.
 
-In practice, this feature relies on the Cockpit Loki API. It will generate tokens for each project to allow you to view the logs for the project.
-
-This requires your API key to have the `ObservabilityFullAccess` permission set to work.
+This feature relies on the Cockpit Loki API. It will generate a token for each project to allow you to view the logs of the resources in the project. As such, you will need to provide the `ObservabilityFullAccess` permission set to your API token.
 
 ## Supported Resources
 
@@ -60,3 +60,11 @@ This requires your API key to have the `ObservabilityFullAccess` permission set 
 | Serverless Container | ✅    | ✅        | ✅      | ✅    |
 | Registry Namespace   | ✅    | ✅        | ✅      | ❌    |
 | RDB Instance         | ✅    | ✅        | ✅      | ✅    |
+
+## Troubleshooting
+
+### IAM Permissions
+
+If you're using an IAM scoped token, you will need to provide the `ProjectReadyOnly` permission set to your API token. This is needed to retrieve the projects in your account, so that all resources can be listed.
+
+In addition, you will need read permissions for all the products you want to use with `scwtui`. For instance, if you want to use this tool with all products, you can use the `AllProductsReadOnly` permission set.
