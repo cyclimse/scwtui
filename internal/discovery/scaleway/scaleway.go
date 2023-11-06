@@ -11,11 +11,6 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-const (
-	// MaxRetries is the maximum number of retries for a request.
-	MaxRetries = 3
-)
-
 // ErrShouldRetry is returned when the request should be retried.
 var ErrShouldRetry = errors.New("should retry")
 
@@ -24,8 +19,10 @@ func NewResourceDiscoverer(logger *slog.Logger, client *scw.Client, projects []r
 		logger:    logger,
 		client:    client,
 		config:    config,
-		requested: make(chan requestResources, 1000),
 		projects:  projects,
+		requested: make(chan requestResources, 100),
+		regions:   discoveryRegions(logger, client),
+		zones:     discoveryZones(logger, client),
 	}
 }
 
@@ -37,10 +34,14 @@ type ResourceDiscover struct {
 
 	projects  []resource.Resource
 	requested chan requestResources
+
+	regions []scw.Region
+	zones   []scw.Zone
 }
 
 type ResourceDiscovererConfig struct {
 	NumWorkers int
+	MaxRetries int
 }
 
 func (d *ResourceDiscover) Discover(ctx context.Context, ch chan resource.Resource) error {
@@ -61,7 +62,7 @@ func (d *ResourceDiscover) Discover(ctx context.Context, ch chan resource.Resour
 	d.requested <- requestResources{
 		Get: d.discoverIAMApplications,
 	}
-	for _, region := range scw.AllRegions {
+	for _, region := range d.regions {
 		region := region // !important
 		d.discoverInRegion(region, d.discoverRegistryNamespacesInRegion)
 		d.discoverInRegion(region, d.discoverContainersInRegion)
@@ -96,7 +97,7 @@ func (d *ResourceDiscover) runWorker(ctx context.Context, ch chan resource.Resou
 				if errors.Is(err, ErrShouldRetry) {
 					// Retry later
 					req.CurrentRetry++
-					if req.CurrentRetry < MaxRetries {
+					if req.CurrentRetry < d.config.MaxRetries {
 						d.requested <- req
 						continue
 					}
@@ -136,4 +137,42 @@ func handleRequestError(err error) error {
 	}
 
 	return err
+}
+
+// discoveryRegions returns the list of regions to discover resources in.
+func discoveryRegions(logger *slog.Logger, client *scw.Client) []scw.Region {
+	region, ok := client.GetDefaultRegion()
+	if !ok {
+		return scw.AllRegions
+	}
+
+	// check if region is in the list of available regions
+	for _, r := range scw.AllRegions {
+		if r == region {
+			return scw.AllRegions
+		}
+	}
+
+	logger.Warn("discover: configured default region is unknown", slog.String("region", string(region)))
+
+	return []scw.Region{region}
+}
+
+// discoveryZones returns the list of zones to discover resources in.
+func discoveryZones(logger *slog.Logger, client *scw.Client) []scw.Zone {
+	zone, ok := client.GetDefaultZone()
+	if !ok {
+		return scw.AllZones
+	}
+
+	// check if zone is in the list of available zones
+	for _, z := range scw.AllZones {
+		if z == zone {
+			return scw.AllZones
+		}
+	}
+
+	logger.Warn("discover: configured default zone is unknown", slog.String("zone", string(zone)))
+
+	return []scw.Zone{zone}
 }
