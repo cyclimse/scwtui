@@ -7,9 +7,10 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cyclimse/scwtui/internal/discovery"
-	"github.com/cyclimse/scwtui/internal/discovery/demo"
+	demo_discovery "github.com/cyclimse/scwtui/internal/discovery/demo"
 	"github.com/cyclimse/scwtui/internal/discovery/scaleway"
 	"github.com/cyclimse/scwtui/internal/observability/cockpit"
+	demo_monitor "github.com/cyclimse/scwtui/internal/observability/demo"
 	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/cyclimse/scwtui/internal/search/bleve"
 	"github.com/cyclimse/scwtui/internal/store/sqlite"
@@ -39,17 +40,17 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 	defer store.Close()
 
 	var discoverer discovery.ResourceDiscoverer
+	var monitor resource.Monitorer
+
 	var client *scw.Client
 	var projects []resource.Resource
 
 	if cmd.Demo {
-		demoDiscovery := demo.NewDiscovery()
-		projects = demoDiscovery.Projects()
-
-		logger.Info("running in demo mode", slog.Any("projects", projects))
-
-		discoverer = demoDiscovery
 		store.SetUnmarshaller(&sqlite.DemoResourceUnmarshal{})
+
+		projects = demo_discovery.ListProjects()
+		discoverer = demo_discovery.NewDiscovery(projects)
+		monitor = demo_monitor.NewDemo()
 	} else {
 		client, err = scw.NewClient(scw.WithUserAgent("scwtui"), scw.WithProfile(p))
 		if err != nil {
@@ -65,6 +66,8 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 			NumWorkers: 10,
 			MaxRetries: 3,
 		})
+
+		monitor = cockpit.NewCockpit(logger, client)
 	}
 
 	projectIDsToNames := make(map[string]string, len(projects))
@@ -99,7 +102,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 
 		Store:   store,
 		Search:  search,
-		Monitor: cockpit.NewCockpit(logger, client),
+		Monitor: monitor,
 
 		ScwClient:         client,
 		ScwProfileName:    profileName,
