@@ -19,29 +19,7 @@ const (
 	maxDemoResources = 100
 )
 
-func NewDiscovery() *Discovery {
-	// Generate all localities
-	allLocalities := make([]resource.Locality, 0, len(scw.AllRegions)+len(scw.AllZones)+1) // +1 for global locality
-
-	for _, region := range scw.AllRegions {
-		allLocalities = append(allLocalities, resource.Region(region))
-	}
-
-	for _, zone := range scw.AllZones {
-		allLocalities = append(allLocalities, resource.Zone(zone))
-	}
-
-	allLocalities = append(allLocalities, resource.Global)
-
-	// Generate all statuses
-
-	allStatuses := make([]resource.Status, 0, 3)
-	allStatuses = append(allStatuses, resource.StatusReady)
-	allStatuses = append(allStatuses, resource.StatusError)
-	allStatuses = append(allStatuses, resource.StatusUnknown)
-
-	// Generate fake projects
-
+func ListProjects() []resource.Resource {
 	numFakeProjects := gofakeit.IntRange(1, 10)
 	fakeProjects := make([]resource.Resource, 0, numFakeProjects)
 
@@ -62,6 +40,30 @@ func NewDiscovery() *Discovery {
 		}
 		fakeProjects = append(fakeProjects, fakeProject)
 	}
+
+	return fakeProjects
+}
+
+func NewDiscovery(fakeProjects []resource.Resource) *Discovery {
+	// Generate all localities
+	allLocalities := make([]resource.Locality, 0, len(scw.AllRegions)+len(scw.AllZones)+1) // +1 for global locality
+
+	for _, region := range scw.AllRegions {
+		allLocalities = append(allLocalities, resource.Region(region))
+	}
+
+	for _, zone := range scw.AllZones {
+		allLocalities = append(allLocalities, resource.Zone(zone))
+	}
+
+	allLocalities = append(allLocalities, resource.Global)
+
+	// Generate all statuses
+
+	allStatuses := make([]resource.Status, 0, 3)
+	allStatuses = append(allStatuses, resource.StatusReady)
+	allStatuses = append(allStatuses, resource.StatusError)
+	allStatuses = append(allStatuses, resource.StatusUnknown)
 
 	return &Discovery{
 		allLocalities:            allLocalities,
@@ -115,6 +117,9 @@ func (d *Discovery) resource() resource.Resource {
 			Tags:      tags,
 			Type:      resourceType,
 			Status:    statusPtr(status),
+		},
+		CockpitMetadataValue: resource.CockpitMetadata{
+			CanViewLogs: true,
 		},
 		RawLocality: locality.String(),
 	}
