@@ -8,10 +8,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/cyclimse/scwtui/internal/discovery"
 	demo_discovery "github.com/cyclimse/scwtui/internal/discovery/demo"
-	demo_monitor "github.com/cyclimse/scwtui/internal/observability/demo"
-
 	"github.com/cyclimse/scwtui/internal/discovery/scaleway"
 	"github.com/cyclimse/scwtui/internal/observability/cockpit"
+	demo_monitor "github.com/cyclimse/scwtui/internal/observability/demo"
 	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/cyclimse/scwtui/internal/search/bleve"
 	"github.com/cyclimse/scwtui/internal/store/sqlite"
