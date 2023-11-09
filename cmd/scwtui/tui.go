@@ -116,7 +116,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 	m := scenes.Root(appState)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	// defer cancel()
 
 	g := start(ctx, logger, discoverer, store, search)
 
@@ -167,11 +167,11 @@ func start(ctx context.Context, logger *slog.Logger, discoverer discovery.Resour
 					return nil
 				}
 				if err := store.Store(runCtx, r); err != nil {
-					logger.Error("failed to store resource", slog.Any("resource", r))
+					logger.Error("failed to store resource", slog.Any("resource", r), slog.Any("err", err.Error()))
 					return err
 				}
 				if err := search.Index(r); err != nil {
-					logger.Error("failed to index resource", slog.Any("resource", r))
+					logger.Error("failed to index resource", slog.Any("resource", r), slog.String("err", err.Error()))
 					return err
 				}
 			}

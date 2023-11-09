@@ -20,10 +20,12 @@ const (
 	tokenName = "scwtui"
 
 	// queryTemplateWithName is the template used to query logs from Loki.
-	queryTemplateWithName = `{resource_name="%s", resource_type="%s"} |~ "^{.*}$" | json | line_format "{{.message}}"`
-
+	queryTemplateWithName = `{resource_name="%s", resource_type="%s"}`
+	// queryTemplateServerless is the template used to query logs from Loki for Serverless Functions & Containers.
+	// Because Serverless logs are sent as JSON, we only get the message field.
+	queryTemplateServerless = `{resource_name="%s", resource_type="%s"} |~ "^{.*}$" | json | line_format "{{.message}}"`
 	// queryTemplateWithID is the template used to query logs from Loki.
-	queryTemplateWithID = `{resource_id="%s", resource_type="%s"} |~ "^{.*}$" | json | line_format "{{.message}}"`
+	queryTemplateWithID = `{resource_id="%s", resource_type="%s"}`
 )
 
 // ErrCockpitNotActivated is returned when the cockpit is not activated for a project.
@@ -144,7 +146,12 @@ func (c *Cockpit) parseLogs(resp *http.Response) ([]resource.Log, error) {
 }
 
 func buildQuery(r resource.Resource) string {
+	metadata := r.Metadata()
 	cockpitMetadata := r.CockpitMetadata()
+
+	if metadata.Type == resource.TypeFunction || metadata.Type == resource.TypeContainer {
+		return fmt.Sprintf(queryTemplateServerless, cockpitMetadata.ResourceName, cockpitMetadata.ResourceType)
+	}
 
 	if cockpitMetadata.ResourceID != "" {
 		return fmt.Sprintf(queryTemplateWithID, cockpitMetadata.ResourceID, cockpitMetadata.ResourceType)
