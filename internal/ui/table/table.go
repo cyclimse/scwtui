@@ -95,6 +95,10 @@ func (m *Model) UpdateResources(resources []resource.Resource) {
 }
 
 func (m *Model) SelectedResource() resource.Resource {
+	if m.table.Cursor() < 0 || m.table.Cursor() >= len(m.resources) {
+		return nil
+	}
+
 	return m.resources[m.table.Cursor()]
 }
 
