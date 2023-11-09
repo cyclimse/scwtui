@@ -7,6 +7,9 @@ type Config struct {
 		Level slog.Level `default:"INFO"            enum:"DEBUG,INFO,WARN,ERROR" help:"Log level"`
 		File  string     `default:"/tmp/scwtui.log" help:"File to write logs to"`
 	} `embed:"" prefix:"log-"`
+
+	Debug bool `default:"false" help:"Enable debug mode"`
+
 	Scaleway `embed:""`
 	Tui      `embed:"" prefix:"ui-"`
 }

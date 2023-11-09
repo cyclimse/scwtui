@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -25,10 +26,10 @@ type TuiCmd struct {
 }
 
 //nolint:funlen,gocognit // this is a command
-func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
-	logger := cmdCtx.Logger
+func (cmd *TuiCmd) Run(rs *RootState) error {
+	logger := rs.Logger
 
-	p, err := loadScalewayProfile(cmdCtx.Profile)
+	p, err := loadScalewayProfile(rs.Profile)
 	if err != nil {
 		return err
 	}
@@ -52,7 +53,10 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		discoverer = demo_discovery.NewDiscovery(projects)
 		monitor = demo_monitor.NewDemo()
 	} else {
-		client, err = scw.NewClient(scw.WithUserAgent("scwtui"), scw.WithProfile(p))
+		client, err = scw.NewClient(
+			scw.WithUserAgent(fmt.Sprintf("scwtui/%s", rs.Version)),
+			scw.WithProfile(p),
+		)
 		if err != nil {
 			return err
 		}
@@ -83,16 +87,16 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 
 	for _, r := range projects {
 		if err := store.Store(context.Background(), r); err != nil {
-			logger.Error("failed to store resource", slog.Any("resource", r))
+			logger.Error("tui: failed to store resource", slog.Any("resource", r), slog.String("err", err.Error()))
 			return err
 		}
 		if err := search.Index(r); err != nil {
-			logger.Error("failed to index resource", slog.Any("resource", r))
+			logger.Error("tui: failed to index resource", slog.Any("resource", r), slog.String("err", err.Error()))
 			return err
 		}
 	}
 
-	profileName := cmdCtx.Profile
+	profileName := rs.Profile
 	if profileName == "" {
 		profileName = "default"
 	}
@@ -111,7 +115,7 @@ func (cmd *TuiCmd) Run(cmdCtx *CmdContext) error {
 		Keys: ui.DefaultKeyMap(),
 
 		Styles:                 ui.DefaultStyles(),
-		SyntaxHighlighterTheme: cmdCtx.Config.Tui.Theme,
+		SyntaxHighlighterTheme: rs.Config.Tui.Theme,
 	}
 	m := scenes.Root(appState)
 
@@ -153,7 +157,7 @@ func start(ctx context.Context, logger *slog.Logger, discoverer discovery.Resour
 			if errors.Is(err, context.Canceled) {
 				return nil
 			}
-			slog.With("err", err).Error("failed to discover resources")
+			slog.Error("tui: failed to discover resources", slog.String("err", err.Error()))
 		}
 		return err
 	})
@@ -167,11 +171,11 @@ func start(ctx context.Context, logger *slog.Logger, discoverer discovery.Resour
 					return nil
 				}
 				if err := store.Store(runCtx, r); err != nil {
-					logger.Error("failed to store resource", slog.Any("resource", r), slog.Any("err", err.Error()))
+					logger.Error("tui: failed to store resource", slog.Any("resource", r), slog.Any("err", err.Error()))
 					return err
 				}
 				if err := search.Index(r); err != nil {
-					logger.Error("failed to index resource", slog.Any("resource", r), slog.String("err", err.Error()))
+					logger.Error("tui: failed to index resource", slog.Any("resource", r), slog.String("err", err.Error()))
 					return err
 				}
 			}
