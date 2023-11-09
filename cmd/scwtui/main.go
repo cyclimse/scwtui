@@ -3,15 +3,16 @@ package main
 import (
 	"log/slog"
 	"os"
+	"runtime/debug"
 
 	"github.com/alecthomas/kong"
 	"github.com/cyclimse/scwtui/internal/config"
 )
 
-type CmdContext struct {
+type RootState struct {
 	config.Config
-
-	Logger *slog.Logger
+	Logger  *slog.Logger
+	Version string
 }
 
 type CLI struct {
@@ -31,7 +32,20 @@ func main() {
 		ctx.FatalIfErrorf(err)
 	}
 
-	err = ctx.Run(&CmdContext{Config: cfg, Logger: logger})
+	rs := &RootState{
+		Config: cfg,
+		Logger: logger,
+	}
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		rs.Version = info.Main.Version
+		logger.Debug("main: using scwtui version",
+			slog.String("version", rs.Version),
+			slog.String("go_version", info.GoVersion),
+		)
+	}
+
+	err = ctx.Run(rs)
 	ctx.FatalIfErrorf(err)
 }
 
@@ -41,8 +55,14 @@ func initLogger(config config.Config) (*slog.Logger, error) {
 		return nil, err
 	}
 
-	loggerHandler := slog.NewJSONHandler(w, &slog.HandlerOptions{
-		Level: config.Logging.Level,
+	logLevel := config.Logging.Level
+	if config.Debug {
+		logLevel = slog.LevelDebug
+	}
+
+	loggerHandler := slog.NewTextHandler(w, &slog.HandlerOptions{
+		Level:     logLevel,
+		AddSource: config.Debug,
 	})
 	return slog.New(loggerHandler), nil
 }
