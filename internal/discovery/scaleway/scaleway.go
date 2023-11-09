@@ -68,6 +68,7 @@ func (d *ResourceDiscover) Discover(ctx context.Context, ch chan resource.Resour
 		d.discoverInRegion(region, d.discoverContainersInRegion)
 		d.discoverInRegion(region, d.discoverFunctionsInRegion)
 		d.discoverInRegion(region, d.discoverRdbInstancesInRegion)
+		d.discoverInRegion(region, d.discoverKapsuleClustersInRegion)
 	}
 
 	return g.Wait()

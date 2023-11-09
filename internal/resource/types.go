@@ -14,5 +14,6 @@ const (
 	TypeContainer
 	TypeRegistryNamespace // Registry Namespace
 	TypeRdbInstance       // RDB Instance
+	TypeKapsuleCluster    // Kapsule Cluster
 	NumberOfResourceTypes
 )
