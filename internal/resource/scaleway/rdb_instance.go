@@ -19,7 +19,7 @@ func (i RdbInstance) Metadata() resource.Metadata {
 		Description: nil,
 		Tags:        i.Tags,
 		Type:        resource.TypeRdbInstance,
-		Locality:    resource.Global,
+		Locality:    resource.Region(i.Region),
 	}
 }
 

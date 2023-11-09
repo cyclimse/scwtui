@@ -60,7 +60,8 @@ This feature relies on the Cockpit Loki API. It will generate a token for each p
 | Serverless Container | ✅    | ✅        | ✅      | ✅    |
 | Registry Namespace   | ✅    | ✅        | ✅      | ❌    |
 | RDB Instance         | ✅    | ✅        | ✅      | ✅    |
-| Kapsule Clusters     | ✅    | ✅        | ✅      | ✅    |
+| Kapsule Cluster      | ✅    | ✅        | ✅      | ✅    |
+| Instance             | ✅    | ✅        | ✅      | ❌    |
 
 ## Troubleshooting
 
