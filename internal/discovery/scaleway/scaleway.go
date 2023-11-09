@@ -70,6 +70,10 @@ func (d *ResourceDiscover) Discover(ctx context.Context, ch chan resource.Resour
 		d.discoverInRegion(region, d.discoverRdbInstancesInRegion)
 		d.discoverInRegion(region, d.discoverKapsuleClustersInRegion)
 	}
+	for _, zone := range d.zones {
+		zone := zone // !important
+		d.discoverInZone(zone, d.discoverInstancesInZone)
+	}
 
 	return g.Wait()
 }
@@ -78,6 +82,14 @@ func (d *ResourceDiscover) discoverInRegion(region scw.Region, discoverFunc func
 	d.requested <- requestResources{
 		Get: func(ctx context.Context) ([]resource.Resource, error) {
 			return discoverFunc(ctx, region)
+		},
+	}
+}
+
+func (d *ResourceDiscover) discoverInZone(zone scw.Zone, discoverFunc func(ctx context.Context, zone scw.Zone) ([]resource.Resource, error)) {
+	d.requested <- requestResources{
+		Get: func(ctx context.Context) ([]resource.Resource, error) {
+			return discoverFunc(ctx, zone)
 		},
 	}
 }

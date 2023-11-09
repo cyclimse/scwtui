@@ -18,12 +18,13 @@ func _() {
 	_ = x[TypeRegistryNamespace-7]
 	_ = x[TypeRdbInstance-8]
 	_ = x[TypeKapsuleCluster-9]
-	_ = x[NumberOfResourceTypes-10]
+	_ = x[TypeInstance-10]
+	_ = x[NumberOfResourceTypes-11]
 }
 
-const _Type_name = "ProjectIAM ApplicationCockpitFunction NamespaceFunctionContainer NamespaceContainerRegistry NamespaceRDB InstanceKapsule ClusterNumberOfResourceTypes"
+const _Type_name = "ProjectIAM ApplicationCockpitFunction NamespaceFunctionContainer NamespaceContainerRegistry NamespaceRDB InstanceKapsule ClusterInstanceNumberOfResourceTypes"
 
-var _Type_index = [...]uint8{0, 7, 22, 29, 47, 55, 74, 83, 101, 113, 128, 149}
+var _Type_index = [...]uint8{0, 7, 22, 29, 47, 55, 74, 83, 101, 113, 128, 136, 157}
 
 func (i Type) String() string {
 	if i < 0 || i >= Type(len(_Type_index)-1) {

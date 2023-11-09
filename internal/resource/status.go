@@ -9,6 +9,7 @@ const (
 	StatusDeleted Status = "deleted"
 	StatusReady   Status = "ready"
 	StatusPending Status = "pending"
+	StatusRunning Status = "running"
 )
 
 func (s *Status) Emoji() rune {
@@ -17,7 +18,7 @@ func (s *Status) Emoji() rune {
 	}
 
 	switch *s {
-	case StatusActive, StatusReady:
+	case StatusActive, StatusReady, StatusRunning:
 		return '✅'
 	case StatusError:
 		return '❌'
