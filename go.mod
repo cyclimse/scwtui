@@ -3,7 +3,7 @@ module github.com/cyclimse/scwtui
 go 1.21.1
 
 require (
-	github.com/alecthomas/chroma/v2 v2.10.0
+	github.com/alecthomas/chroma/v2 v2.11.1
 	github.com/brianvoe/gofakeit/v6 v6.24.0
 	github.com/charmbracelet/bubbletea v0.24.2
 	github.com/mattn/go-runewidth v0.0.15
