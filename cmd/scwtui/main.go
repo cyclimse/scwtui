@@ -33,17 +33,12 @@ func main() {
 	}
 
 	rs := &RootState{
-		Config: cfg,
-		Logger: logger,
+		Config:  cfg,
+		Logger:  logger,
+		Version: gitVersion(),
 	}
 
-	if info, ok := debug.ReadBuildInfo(); ok {
-		rs.Version = info.Main.Version
-		logger.Debug("main: using scwtui version",
-			slog.String("version", rs.Version),
-			slog.String("go_version", info.GoVersion),
-		)
-	}
+	logger.Info("starting scwtui", slog.String("version", rs.Version))
 
 	err = ctx.Run(rs)
 	ctx.FatalIfErrorf(err)
@@ -65,4 +60,19 @@ func initLogger(config config.Config) (*slog.Logger, error) {
 		AddSource: config.Debug,
 	})
 	return slog.New(loggerHandler), nil
+}
+
+func gitVersion() string {
+	info, ok := debug.ReadBuildInfo()
+	if !ok {
+		return "unknown"
+	}
+
+	for _, setting := range info.Settings {
+		if setting.Key == "vcs.revision" {
+			return setting.Value
+		}
+	}
+
+	return "development"
 }
