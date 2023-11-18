@@ -19,6 +19,8 @@ import (
 	"github.com/cyclimse/scwtui/internal/ui/table"
 )
 
+const refreshInterval = 5 * time.Second
+
 func Root(state ui.ApplicationState) tea.Model {
 	m := Model{
 		state:   state,
@@ -32,49 +34,56 @@ func Root(state ui.ApplicationState) tea.Model {
 	return &m
 }
 
-func refreshEvery(state ui.ApplicationState, d time.Duration, skip bool) tea.Cmd {
-	return tea.Every(d, func(t time.Time) tea.Msg {
-		// if we're skipping the refresh, return an empty slice of resources.
-		if skip {
-			return []resource.Resource{}
-		}
+type refreshPeriodicallyMsg struct {
+	Resources []resource.Resource
+}
 
+func refreshEvery(state ui.ApplicationState, d time.Duration) tea.Cmd {
+	return tea.Every(d, func(t time.Time) tea.Msg {
 		ctx, cancel := context.WithDeadline(context.Background(), t.Add(d))
 		defer cancel()
 
 		resources, err := state.Store.ListAllResources(ctx)
 		if err != nil {
 			state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
-			return []resource.Resource{}
+			return refreshPeriodicallyMsg{Resources: []resource.Resource{}}
 		}
 
-		return resources
+		return refreshPeriodicallyMsg{Resources: resources}
 	})
+}
+
+type refreshOnceMsg struct {
+	Resources []resource.Resource
 }
 
 func (m Model) Init() tea.Cmd {
 	return tea.Batch(
 		tea.EnterAltScreen,
-		refreshEvery(m.state, time.Second, false),
+		// on startup, refresh the resources quicker than the default interval.
+		refreshEvery(m.state, time.Second),
 		m.header.Init(),
 		m.search.Init(),
 		m.table.Init(),
 	)
 }
 
-//nolint:funlen,gocognit // will address this later.
+//nolint:funlen // root component, hard to split.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		return m.updateWindowsResize(msg), nil
-	case []resource.Resource:
+	case refreshPeriodicallyMsg:
 		// if the search input is dirty, don't update the table.
 		if !m.search.Dirty() {
-			m.table.UpdateResources(msg)
+			m.table.UpdateResources(msg.Resources)
 		}
-		return m, refreshEvery(m.state, time.Second, m.search.Dirty())
+		return m, refreshEvery(m.state, refreshInterval)
+	case refreshOnceMsg:
+		m.table.UpdateResources(msg.Resources)
+		return m, nil
 	case search.ResultsMsg:
 		m.table.UpdateResources(msg.Resources)
 		return m, nil
@@ -88,8 +97,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch {
 		case key.Matches(msg, m.state.Keys.Quit):
 			if m.focused != ui.TableFocused {
-				m.setFocused(ui.TableFocused)
-				return m, nil
+				cmd = m.setFocused(ui.TableFocused)
+				return m, cmd
 			}
 			return m, tea.Quit
 		case msg.Type == tea.KeyEnter:
@@ -103,25 +112,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, cmd
 		}
 
-		// Absorb all keys when those components are focused.
-		switch m.focused {
-		case ui.SearchFocused:
-			m.search, cmd = m.search.Update(msg)
-			if !m.search.Dirty() {
-				m.setFocused(ui.TableFocused)
-				// we ignore the cmd because we don't want to refresh the table
-				return m, nil
-			}
-			return m, cmd
-		case ui.DescribeFocused:
-			m.describe, cmd = m.describe.Update(msg)
-			return m, cmd
-		case ui.ConfirmFocused:
-			m.confirm, cmd = m.confirm.Update(msg)
-			return m, cmd
-		case ui.JournalFocused:
-			m.journal, cmd = m.journal.Update(msg)
-			return m, cmd
+		// absorb all keys when those components are focused.
+		if m.focused != ui.TableFocused {
+			return m.updateFocusedOnKeyMsg(msg)
 		}
 
 		switch {
@@ -153,7 +146,35 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
-	// Used to pass the blink command to the search component.
+	// absorb all messages when those components are focused.
+	// for instance, the "blink" message from the text input component
+	// will get forwarded to the search component.
+	return m.updateFocusedOnAnyMsg(msg)
+}
+
+func (m Model) updateFocusedOnKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+
+	switch m.focused {
+	case ui.SearchFocused:
+		m.search, cmd = m.search.Update(msg)
+		if !m.search.Dirty() {
+			cmd = m.setFocused(ui.TableFocused)
+		}
+	case ui.DescribeFocused:
+		m.describe, cmd = m.describe.Update(msg)
+	case ui.ConfirmFocused:
+		m.confirm, cmd = m.confirm.Update(msg)
+	case ui.JournalFocused:
+		m.journal, cmd = m.journal.Update(msg)
+	}
+
+	return m, cmd
+}
+
+func (m Model) updateFocusedOnAnyMsg(msg tea.Msg) (Model, tea.Cmd) {
+	var cmd tea.Cmd
+
 	switch m.focused {
 	case ui.SearchFocused:
 		m.search, cmd = m.search.Update(msg)
@@ -208,30 +229,48 @@ const (
 )
 
 func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
-	m.focused = focused
-	m.header.SetFocused(focused)
+	var cmd tea.Cmd
 
-	switch m.focused {
+	switch focused {
 	case ui.TableFocused:
 		m.table.Focus()
+
+		// special case: if we come back from the search, we need to update the
+		// resources so that the table is up to date.
+		// this will be handled by the refreshEvery command, but we need to
+		// do it quicker than the default interval to make the UI more responsive.
+		if m.focused == ui.SearchFocused && !m.search.Dirty() {
+			cmd = func() tea.Msg {
+				ctx := context.Background()
+				resources, err := m.state.Store.ListAllResources(ctx)
+				if err != nil {
+					m.state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
+					return refreshOnceMsg{Resources: []resource.Resource{}}
+				}
+				return refreshOnceMsg{Resources: resources}
+			}
+		}
 	case ui.SearchFocused:
 		m.table.Blur()
-		return m.search.Focus()
+		cmd = m.search.Focus()
 	case ui.DescribeFocused:
 		m.table.Blur()
 		m.describe = describe.Describe(m.state, m.table.SelectedResource(), m.table.Width()-fullViewExtraPaddding, m.table.Height()+fullViewExtraHeight)
-		return m.describe.Init()
+		cmd = m.describe.Init()
 	case ui.ConfirmFocused:
 		m.table.Blur()
 		m.confirm = confirm.Confirm(m.state, m.table.SelectedResource(), m.table.Width(), m.table.Height())
-		return m.confirm.Init()
+		cmd = m.confirm.Init()
 	case ui.JournalFocused:
 		m.table.Blur()
 		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width()-fullViewExtraPaddding, m.table.Height()+fullViewExtraHeight)
-		return m.journal.Init()
+		cmd = m.journal.Init()
 	}
 
-	return nil
+	m.focused = focused
+	m.header.SetFocused(focused)
+
+	return cmd
 }
 
 func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
