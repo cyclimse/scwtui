@@ -11,6 +11,7 @@ const (
 	SearchFocused
 	DescribeFocused
 	ConfirmFocused
+	ActionsFocused
 	JournalFocused
 	NumViews // The number of views in the app
 )

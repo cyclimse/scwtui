@@ -3,6 +3,7 @@ package ui
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/list"
 )
 
 func DefaultKeyMap() KeyMap {
@@ -50,6 +51,14 @@ func DefaultKeyMap() KeyMap {
 				key.WithHelp("enter", "to confirm deletion"),
 			),
 		},
+		ActionsKeyMap: ActionsKeyMap{
+			RootKeyMap: defaultRootKeyMap,
+			Do: key.NewBinding(
+				key.WithKeys("enter"),
+				key.WithHelp("enter", "to execute action"),
+			),
+			ListKeyMap: list.DefaultKeyMap(),
+		},
 	}
 }
 
@@ -57,6 +66,7 @@ type KeyMap struct {
 	RootKeyMap
 	TableKeyMap
 	ConfirmKeyMap
+	ActionsKeyMap
 }
 
 func (m KeyMap) Get(focused Focused) help.KeyMap {
@@ -65,6 +75,8 @@ func (m KeyMap) Get(focused Focused) help.KeyMap {
 		return m.TableKeyMap
 	case ConfirmFocused:
 		return m.ConfirmKeyMap
+	case ActionsFocused:
+		return m.ActionsKeyMap
 	default:
 		return m.RootKeyMap
 	}
@@ -123,4 +135,19 @@ func (m ConfirmKeyMap) ShortHelp() []key.Binding {
 
 func (m ConfirmKeyMap) FullHelp() [][]key.Binding {
 	return nil
+}
+
+type ActionsKeyMap struct {
+	RootKeyMap
+	Do         key.Binding
+	ListKeyMap list.KeyMap
+}
+
+func (m ActionsKeyMap) ShortHelp() []key.Binding {
+	return []key.Binding{
+		m.Do,
+		m.ListKeyMap.CursorUp,
+		m.ListKeyMap.CursorDown,
+		m.Quit,
+	}
 }

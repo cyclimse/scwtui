@@ -6,10 +6,14 @@ type Styles struct {
 	BaseBorder lipgloss.Style
 	Title      lipgloss.Style
 	Error      lipgloss.Style
+
+	ModalWidth int
 	Modal      lipgloss.Style
 }
 
 func DefaultStyles() Styles {
+	modalWidth := 50
+
 	return Styles{
 		BaseBorder: lipgloss.NewStyle().
 			BorderStyle(lipgloss.NormalBorder()).
@@ -22,6 +26,7 @@ func DefaultStyles() Styles {
 			Foreground(lipgloss.Color("15")).
 			Bold(true).
 			Padding(0, 1),
-		Modal: lipgloss.NewStyle().Border(lipgloss.NormalBorder(), true).Width(50).Padding(1, 2),
+		ModalWidth: modalWidth,
+		Modal:      lipgloss.NewStyle().Border(lipgloss.NormalBorder(), true).Width(modalWidth).Padding(1, 2),
 	}
 }

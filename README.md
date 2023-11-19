@@ -59,15 +59,15 @@ Quick actions are available for some resources. You can view the available actio
 
 ## Supported Resources
 
-| Resource             | List | Describe | Delete | Logs | Actions          |
-|----------------------|------|----------|--------|------|------------------|
-| Serverless Function  | ✅    | ✅        | ✅      | ✅    | (planned)        |
-| Serverless Container | ✅    | ✅        | ✅      | ✅    | (planned)        |
-| Serverless Job       | ✅    | ✅        | ✅      | ✅    | `Start`, `Retry` |
-| Registry Namespace   | ✅    | ✅        | ✅      | ❌    |                  |
-| RDB Instance         | ✅    | ✅        | ✅      | ✅    |                  |
-| Kapsule Cluster      | ✅    | ✅        | ✅      | ✅    |                  |
-| Instance             | ✅    | ✅        | ✅      | ❌    | (planned)        |
+| Resource             | List | Describe | Delete | Logs |     Actions      |
+|----------------------|:----:|:--------:|:------:|:----:|:----------------:|
+| Serverless Function  |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
+| Serverless Container |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
+| Serverless Job       |  ✅   |    ✅     |   ✅    |  ✅   | `Start`, `Stop`  |
+| Registry Namespace   |  ✅   |    ✅     |   ✅    |  ❌   |                  |
+| RDB Instance         |  ✅   |    ✅     |   ✅    |  ✅   |                  |
+| Kapsule Cluster      |  ✅   |    ✅     |   ✅    |  ✅   |                  |
+| Instance             |  ✅   |    ✅     |   ✅    |  ❌   |    (planned)     |
 
 ## Troubleshooting
 

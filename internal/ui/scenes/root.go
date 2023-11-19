@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/cyclimse/scwtui/internal/ui"
+	"github.com/cyclimse/scwtui/internal/ui/actions"
 	"github.com/cyclimse/scwtui/internal/ui/confirm"
 	"github.com/cyclimse/scwtui/internal/ui/describe"
 	"github.com/cyclimse/scwtui/internal/ui/header"
@@ -19,7 +20,7 @@ import (
 	"github.com/cyclimse/scwtui/internal/ui/table"
 )
 
-const refreshInterval = 5 * time.Second
+const refreshInterval = 3 * time.Second
 
 func Root(state ui.ApplicationState) tea.Model {
 	m := Model{
@@ -134,7 +135,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd = m.setFocused(ui.ConfirmFocused)
 			return m, cmd
 		case key.Matches(msg, m.state.Keys.Actions):
-			return m.updateOnAction()
+			_, ok := m.table.SelectedResource().(resource.Actionable)
+			if ok {
+				cmd = m.setFocused(ui.ActionsFocused)
+				return m, cmd
+			}
 		}
 
 		m.setFocused(ui.TableFocused)
@@ -163,6 +168,8 @@ func (m Model) updateFocusedOnKeyMsg(msg tea.KeyMsg) (Model, tea.Cmd) {
 		m.confirm, cmd = m.confirm.Update(msg)
 	case ui.JournalFocused:
 		m.journal, cmd = m.journal.Update(msg)
+	case ui.ActionsFocused:
+		m.actions, cmd = m.actions.Update(msg)
 	}
 
 	return m, cmd
@@ -190,6 +197,14 @@ func (m Model) updateFocusedOnAnyMsg(msg tea.Msg) (Model, tea.Cmd) {
 		}
 	case ui.JournalFocused:
 		m.journal, cmd = m.journal.Update(msg)
+	case ui.ActionsFocused:
+		if _, ok := msg.(actions.ActionResultMsg); ok {
+			cmd = tea.Tick(1*time.Second, func(t time.Time) tea.Msg {
+				return ui.TableFocused
+			})
+		} else {
+			m.actions, cmd = m.actions.Update(msg)
+		}
 	}
 
 	return m, cmd
@@ -206,11 +221,14 @@ func (m Model) View() string {
 		b.WriteString(m.table.View())
 	case ui.DescribeFocused:
 		b.WriteString(m.describe.View())
-	case ui.ConfirmFocused:
+	case ui.ConfirmFocused: // confirm is a modal, so we need to render it on top of the table.
 		b.WriteString("\n\n")
 		b.WriteString(lipgloss.PlaceHorizontal(m.table.Width(), lipgloss.Center, m.confirm.View()))
 	case ui.JournalFocused:
 		b.WriteString(m.journal.View())
+	case ui.ActionsFocused: // actions is a modal, so we need to render it on top of the table.
+		b.WriteString("\n\n")
+		b.WriteString(lipgloss.PlaceHorizontal(m.table.Width(), lipgloss.Center, m.actions.View()))
 	}
 	return b.String()
 }
@@ -261,6 +279,10 @@ func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 		m.table.Blur()
 		m.journal = journal.Journal(m.state, m.table.SelectedResource(), m.table.Width()-fullViewExtraPaddding, m.table.Height()+fullViewExtraHeight)
 		cmd = m.journal.Init()
+	case ui.ActionsFocused:
+		m.table.Blur()
+		m.actions = actions.Actions(m.state, m.table.SelectedResource().(resource.Actionable), m.table.Width(), m.table.Height())
+		cmd = m.actions.Init()
 	}
 
 	m.focused = focused
@@ -282,26 +304,6 @@ func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
 	return m
 }
 
-// updateOnAction will update the model and return a command if the selected
-// resource has an action.
-func (m Model) updateOnAction() (tea.Model, tea.Cmd) {
-	r := m.table.SelectedResource()
-	if actionable, ok := r.(resource.Actionable); ok {
-		actions := actionable.Actions()
-		if len(actions) > 1 {
-			// in the future, we will display a menu to select the action.
-			panic("scwtui doesn't support resources with more than one action at the moment")
-		}
-		if len(actions) == 1 {
-			cmd := func() tea.Msg {
-				return actions[0].Do(context.Background(), m.state.Store, m.state.ScwClient)
-			}
-			return m, cmd
-		}
-	}
-	return m, nil
-}
-
 type Model struct {
 	state   ui.ApplicationState
 	focused ui.Focused
@@ -312,4 +314,5 @@ type Model struct {
 	table    table.Model
 	confirm  confirm.Model
 	journal  journal.Model
+	actions  actions.Model
 }
