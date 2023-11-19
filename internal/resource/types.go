@@ -16,5 +16,7 @@ const (
 	TypeRdbInstance       // RDB Instance
 	TypeKapsuleCluster    // Kapsule Cluster
 	TypeInstance
+	TypeJobDefinition // Job Definition
+	TypeJobRun        // Job Run
 	NumberOfResourceTypes
 )

@@ -69,6 +69,7 @@ func (d *ResourceDiscover) Discover(ctx context.Context, ch chan resource.Resour
 		d.discoverInRegion(region, d.discoverFunctionsInRegion)
 		d.discoverInRegion(region, d.discoverRdbInstancesInRegion)
 		d.discoverInRegion(region, d.discoverKapsuleClustersInRegion)
+		d.discoverInRegion(region, d.discoverJobsInRegion)
 	}
 	for _, zone := range d.zones {
 		zone := zone // !important
