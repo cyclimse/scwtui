@@ -10,6 +10,13 @@ const (
 	StatusReady   Status = "ready"
 	StatusPending Status = "pending"
 	StatusRunning Status = "running"
+
+	// Job Statuses.
+
+	StatusQueued   Status = "queued"
+	StatusSucceded Status = "succeeded"
+	StatusFailed   Status = "failed"
+	StatusCanceled Status = "canceled"
 )
 
 func (s *Status) Emoji() rune {
@@ -18,10 +25,14 @@ func (s *Status) Emoji() rune {
 	}
 
 	switch *s {
-	case StatusActive, StatusReady, StatusRunning:
+	case StatusActive, StatusReady, StatusRunning, StatusSucceded:
 		return '✅'
-	case StatusError:
+	case StatusPending, StatusQueued:
+		return '🕒'
+	case StatusError, StatusFailed:
 		return '❌'
+	case StatusDeleted, StatusCanceled:
+		return '🧹'
 	default:
 		return '❔'
 	}

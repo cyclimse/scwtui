@@ -18,7 +18,7 @@ func (d *ResourceDiscover) discoverIAMApplications(ctx context.Context) ([]resou
 	api := iam.NewAPI(d.client)
 
 	apps, err := api.ListApplications(&iam.ListApplicationsRequest{
-		OrganizationID: &organizationID,
+		OrganizationID: organizationID,
 	}, scw.WithAllPages(), scw.WithContext(ctx))
 	if err != nil {
 		return nil, err

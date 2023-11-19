@@ -50,6 +50,10 @@ func (s ScalewayResourceUnmarshal) UnmarshalResource(resourceType resource.Type,
 		return fromString[scaleway.KapsuleCluster](resourceData)
 	case resource.TypeInstance:
 		return fromString[scaleway.Instance](resourceData)
+	case resource.TypeJobDefinition:
+		return fromString[scaleway.JobDefinition](resourceData)
+	case resource.TypeJobRun:
+		return fromString[scaleway.JobRun](resourceData)
 	default:
 		return nil, fmt.Errorf("store: unknown resource type %s", resourceType)
 	}
