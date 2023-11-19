@@ -33,6 +33,10 @@ func DefaultKeyMap() KeyMap {
 				key.WithKeys("x"),
 				key.WithHelp("x", "delete"),
 			),
+			Actions: key.NewBinding(
+				key.WithKeys("t"),
+				key.WithHelp("t", "actions"),
+			),
 			ToggleAltView: key.NewBinding(
 				key.WithKeys("g"),
 				key.WithHelp("g", "view ids"),
@@ -85,6 +89,7 @@ type TableKeyMap struct {
 	Describe      key.Binding
 	Logs          key.Binding
 	Delete        key.Binding
+	Actions       key.Binding
 	ToggleAltView key.Binding
 }
 
@@ -94,6 +99,7 @@ func (m TableKeyMap) ShortHelp() []key.Binding {
 		m.Describe,
 		m.Logs,
 		m.Delete,
+		m.Actions,
 		m.ToggleAltView,
 		m.Quit,
 	}
