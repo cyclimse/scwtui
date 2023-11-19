@@ -63,7 +63,7 @@ Quick actions are available for some resources. You can view the available actio
 |----------------------|:----:|:--------:|:------:|:----:|:----------------:|
 | Serverless Function  |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
 | Serverless Container |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
-| Serverless Job       |  ✅   |    ✅     |   ✅    |  ✅   | `Start`, `Retry` |
+| Serverless Job       |  ✅   |    ✅     |   ✅    |  ✅   | `Start`, `Stop`  |
 | Registry Namespace   |  ✅   |    ✅     |   ✅    |  ❌   |                  |
 | RDB Instance         |  ✅   |    ✅     |   ✅    |  ✅   |                  |
 | Kapsule Cluster      |  ✅   |    ✅     |   ✅    |  ✅   |                  |
