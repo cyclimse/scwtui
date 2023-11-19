@@ -67,6 +67,13 @@ func TestStore(t *testing.T) {
 				Status:    cockpit_sdk.CockpitStatusCreating,
 			},
 		},
+		{
+			name: "scaleway project",
+			resource: scaleway.Project{
+				ID:   "project-id",
+				Name: "project-name",
+			},
+		},
 	}
 
 	for _, tc := range testCases {

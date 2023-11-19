@@ -12,7 +12,7 @@ It allows you to view all the resources in your Scaleway account and perform bas
 The easiest way to run `scwtui` is to use Docker.
 
 ```bash
-docker run -it --rm -v "$HOME/.config/scw:/root/.config/scw" cyclimse/scwtui:0.1
+docker run -it --rm -v "$HOME/.config/scw:/root/.config/scw" cyclimse/scwtui:0.2
 ```
 
 You can also provide your Scaleway credentials using environment variables. See the [scaleway-cli](https://github.com/scaleway/scaleway-cli/blob/master/docs/commands/config.md) documentation for more information.
@@ -59,15 +59,19 @@ Quick actions are available for some resources. You can view the available actio
 
 ## Supported Resources
 
-| Resource             | List | Describe | Delete | Logs |     Actions      |
-|----------------------|:----:|:--------:|:------:|:----:|:----------------:|
-| Serverless Function  |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
-| Serverless Container |  ✅   |    ✅     |   ✅    |  ✅   |    (planned)     |
-| Serverless Job       |  ✅   |    ✅     |   ✅    |  ✅   | `Start`, `Stop`  |
-| Registry Namespace   |  ✅   |    ✅     |   ✅    |  ❌   |                  |
-| RDB Instance         |  ✅   |    ✅     |   ✅    |  ✅   |                  |
-| Kapsule Cluster      |  ✅   |    ✅     |   ✅    |  ✅   |                  |
-| Instance             |  ✅   |    ✅     |   ✅    |  ❌   |    (planned)     |
+| Resource             | List | Describe | Delete | Logs |      Actions       |
+|----------------------|:----:|:--------:|:------:|:----:|:------------------:|
+| Project              |  ✅   |    ✅     |   ✅    |  ❌   | `Activate Cockpit` |
+| Cockpit              |  ✅   |    ✅     |   ✅    |  ❌   |   `Open Grafana`   |
+| Serverless Function  |  ✅   |    ✅     |   ✅    |  ✅   |     (planned)      |
+| Serverless Container |  ✅   |    ✅     |   ✅    |  ✅   |     (planned)      |
+| Serverless Job       |  ✅   |    ✅     |   ✅    |  ✅   |  `Start`, `Stop`   |
+| Registry Namespace   |  ✅   |    ✅     |   ✅    |  ❌   |                    |
+| RDB Instance         |  ✅   |    ✅     |   ✅    |  ✅   |                    |
+| Kapsule Cluster      |  ✅   |    ✅     |   ✅    |  ✅   |                    |
+| Instance             |  ✅   |    ✅     |   ✅    |  ❌   |     (planned)      |
+
+While it is possible to delete projects, it will require you to have deleted all the resources in the project first. In the future, this could be improved by deleting all the resources in the project first.
 
 ## Troubleshooting
 
