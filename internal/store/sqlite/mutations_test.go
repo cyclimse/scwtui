@@ -24,8 +24,6 @@ func TestStore_Store(t *testing.T) {
 	})
 
 	t.Run("store resource that does not exist", func(t *testing.T) {
-		t.Parallel()
-
 		r := &testhelpers.MockResource{
 			MetadataValue: resource.Metadata{
 				Name:        "name",
@@ -78,8 +76,6 @@ func TestStore_Store(t *testing.T) {
 	})
 
 	t.Run("store resource that already exists", func(t *testing.T) {
-		t.Parallel()
-
 		r := &testhelpers.MockResource{
 			MetadataValue: resource.Metadata{
 				ID:       "exists",
