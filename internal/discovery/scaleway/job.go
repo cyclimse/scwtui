@@ -42,8 +42,8 @@ func (d *ResourceDiscover) discoverJobsInRegion(ctx context.Context, region scw.
 			}
 
 			resources = append(resources, scaleway.JobRun{
-				JobRun:    *jobRun,
-				ProjectID: jobDef.ProjectID,
+				JobRun:        *jobRun,
+				JobDefinition: *jobDef,
 			})
 		}
 	}

@@ -27,27 +27,6 @@ func (def JobDefinition) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (def JobDefinition) Trigger(ctx context.Context, s resource.Storer, client *scw.Client) error {
-	api := sdk.NewAPI(client)
-	run, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
-		ID:     def.ID,
-		Region: def.Region,
-	})
-	if err != nil {
-		return err
-	}
-
-	err = s.Store(ctx, JobRun{
-		JobRun:    *run,
-		ProjectID: def.ProjectID,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (def JobDefinition) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	err := api.DeleteJobDefinition(&sdk.DeleteJobDefinitionRequest{
@@ -59,4 +38,38 @@ func (def JobDefinition) Delete(ctx context.Context, s resource.Storer, client *
 	}
 
 	return s.DeleteResource(ctx, def)
+}
+
+func (def JobDefinition) Actions() []resource.Action {
+	return []resource.Action{
+		{
+			Name: "Start",
+			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+				api := sdk.NewAPI(client)
+				r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
+					ID:     def.ID,
+					Region: def.Region,
+				})
+				if err != nil {
+					return err
+				}
+
+				startedRun := &JobRun{
+					JobRun:        *r,
+					JobDefinition: sdk.JobDefinition(def),
+				}
+
+				err = s.Store(ctx, startedRun)
+				if err != nil {
+					return err
+				}
+
+				go func() {
+					_ = startedRun.pollUntilTerminated(ctx, s, client)
+				}()
+
+				return nil
+			},
+		},
+	}
 }

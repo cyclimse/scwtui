@@ -19,13 +19,14 @@ You can also provide your Scaleway credentials using environment variables. See 
 
 ## Keybindings
 
-| Keybinding      | Description                             |
-|-----------------|-----------------------------------------|
-| `esc`, `ctrl+c` | Quit                                    |
-| `\`             | Search                                  |
-| `d`             | Describe selected resource              |
-| `x`             | Delete selected resource                |
-| `l`             | View Cockpit logs for selected resource |
+| Keybinding      | Description                              |
+|-----------------|------------------------------------------|
+| `esc`, `ctrl+c` | Quit                                     |
+| `\`             | Search                                   |
+| `d`             | Describe selected resource               |
+| `x`             | Delete selected resource                 |
+| `l`             | View Cockpit logs for selected resource  |
+| `t`             | View quick actions for selected resource |
 
 ## Features
 
@@ -52,16 +53,21 @@ You can view the logs for a resource by pressing `l` when it is selected. This w
 
 This feature relies on the Cockpit Loki API. It will generate a token for each project to allow you to view the logs of the resources in the project. As such, you will need to provide the `ObservabilityFullAccess` permission set to your API token.
 
+### Quick Actions
+
+Quick actions are available for some resources. You can view the available actions by pressing `t` when a resource is selected. This will open a new window with the available actions.
+
 ## Supported Resources
 
-| Resource             | List | Describe | Delete | Logs |
-|----------------------|------|----------|--------|------|
-| Serverless Function  | ✅    | ✅        | ✅      | ✅    |
-| Serverless Container | ✅    | ✅        | ✅      | ✅    |
-| Registry Namespace   | ✅    | ✅        | ✅      | ❌    |
-| RDB Instance         | ✅    | ✅        | ✅      | ✅    |
-| Kapsule Cluster      | ✅    | ✅        | ✅      | ✅    |
-| Instance             | ✅    | ✅        | ✅      | ❌    |
+| Resource             | List | Describe | Delete | Logs | Actions          |
+|----------------------|------|----------|--------|------|------------------|
+| Serverless Function  | ✅    | ✅        | ✅      | ✅    | (planned)        |
+| Serverless Container | ✅    | ✅        | ✅      | ✅    | (planned)        |
+| Serverless Job       | ✅    | ✅        | ✅      | ✅    | `Start`, `Retry` |
+| Registry Namespace   | ✅    | ✅        | ✅      | ❌    |                  |
+| RDB Instance         | ✅    | ✅        | ✅      | ✅    |                  |
+| Kapsule Cluster      | ✅    | ✅        | ✅      | ✅    |                  |
+| Instance             | ✅    | ✅        | ✅      | ❌    | (planned)        |
 
 ## Troubleshooting
 

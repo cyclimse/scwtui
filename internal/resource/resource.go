@@ -58,3 +58,16 @@ type Resource interface {
 	// Delete deletes the resource.
 	Delete(ctx context.Context, s Storer, client *scw.Client) error
 }
+
+type Action struct {
+	// Name is the name of the action.
+	Name string
+
+	// Do performs the action on the resource.
+	Do func(ctx context.Context, s Storer, client *scw.Client) error
+}
+
+type Actionable interface {
+	// Actions returns the list of actions that can be performed on the resource.
+	Actions() []Action
+}

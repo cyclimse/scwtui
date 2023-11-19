@@ -122,23 +122,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd = m.setFocused(ui.SearchFocused)
 			return m, cmd
 		case key.Matches(msg, m.state.Keys.Describe):
-			if m.focused == ui.TableFocused {
-				cmd = m.setFocused(ui.DescribeFocused)
+			cmd = m.setFocused(ui.DescribeFocused)
+			return m, cmd
+		case key.Matches(msg, m.state.Keys.Logs):
+			canViewLogs := m.table.SelectedResource().CockpitMetadata().CanViewLogs
+			if canViewLogs {
+				cmd = m.setFocused(ui.JournalFocused)
 				return m, cmd
 			}
 		case key.Matches(msg, m.state.Keys.Delete):
-			if m.focused == ui.TableFocused {
-				cmd = m.setFocused(ui.ConfirmFocused)
-				return m, cmd
-			}
-		case key.Matches(msg, m.state.Keys.Logs):
-			if m.focused == ui.TableFocused {
-				canViewLogs := m.table.SelectedResource().CockpitMetadata().CanViewLogs
-				if canViewLogs {
-					cmd = m.setFocused(ui.JournalFocused)
-					return m, cmd
-				}
-			}
+			cmd = m.setFocused(ui.ConfirmFocused)
+			return m, cmd
+		case key.Matches(msg, m.state.Keys.Actions):
+			return m.updateOnAction()
 		}
 
 		m.setFocused(ui.TableFocused)
@@ -284,6 +280,26 @@ func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
 	m.describe.SetDimensions(w-fullViewExtraPaddding, h+fullViewExtraHeight)
 	m.journal.SetDimensions(w-fullViewExtraPaddding, h+fullViewExtraHeight)
 	return m
+}
+
+// updateOnAction will update the model and return a command if the selected
+// resource has an action.
+func (m Model) updateOnAction() (tea.Model, tea.Cmd) {
+	r := m.table.SelectedResource()
+	if actionable, ok := r.(resource.Actionable); ok {
+		actions := actionable.Actions()
+		if len(actions) > 1 {
+			// in the future, we will display a menu to select the action.
+			panic("scwtui doesn't support resources with more than one action at the moment")
+		}
+		if len(actions) == 1 {
+			cmd := func() tea.Msg {
+				return actions[0].Do(context.Background(), m.state.Store, m.state.ScwClient)
+			}
+			return m, cmd
+		}
+	}
+	return m, nil
 }
 
 type Model struct {
