@@ -61,13 +61,13 @@ Quick actions are available for some resources. You can view the available actio
 
 | Resource             | List | Describe | Delete | Logs | Actions          |
 |----------------------|------|----------|--------|------|------------------|
-| Serverless Function  | ✅    | ✅        | ✅      | ✅    | 🔜  (planned)    |
-| Serverless Container | ✅    | ✅        | ✅      | ✅    | 🔜  (planned)    |
+| Serverless Function  | ✅    | ✅        | ✅      | ✅    | (planned)        |
+| Serverless Container | ✅    | ✅        | ✅      | ✅    | (planned)        |
 | Serverless Job       | ✅    | ✅        | ✅      | ✅    | `Start`, `Retry` |
 | Registry Namespace   | ✅    | ✅        | ✅      | ❌    |                  |
 | RDB Instance         | ✅    | ✅        | ✅      | ✅    |                  |
 | Kapsule Cluster      | ✅    | ✅        | ✅      | ✅    |                  |
-| Instance             | ✅    | ✅        | ✅      | ❌    | 🔜 (planned)     |
+| Instance             | ✅    | ✅        | ✅      | ❌    | (planned)        |
 
 ## Troubleshooting
 
