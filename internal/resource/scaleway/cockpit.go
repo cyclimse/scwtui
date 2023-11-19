@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cyclimse/scwtui/internal/resource"
+	"github.com/pkg/browser"
 	sdk "github.com/scaleway/scaleway-sdk-go/api/cockpit/v1beta1"
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
@@ -46,4 +47,15 @@ func (c Cockpit) Delete(ctx context.Context, s resource.Storer, client *scw.Clie
 	}
 
 	return s.DeleteResource(ctx, c)
+}
+
+func (c Cockpit) Actions() []resource.Action {
+	return []resource.Action{
+		{
+			Name: "Open Grafana",
+			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+				return browser.OpenURL(c.Endpoints.GrafanaURL)
+			},
+		},
+	}
 }
