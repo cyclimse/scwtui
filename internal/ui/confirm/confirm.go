@@ -32,7 +32,7 @@ func Confirm(state ui.ApplicationState, r resource.Resource, width, height int) 
 	ti.Placeholder = defaultPrompt
 	ti.Focus()
 
-	m := Model{
+	return Model{
 		textInput: ti,
 		text:      defaultText,
 		state:     state,
@@ -40,8 +40,6 @@ func Confirm(state ui.ApplicationState, r resource.Resource, width, height int) 
 		width:     width,
 		height:    height,
 	}
-
-	return m
 }
 
 // Init initializes the confirm component.

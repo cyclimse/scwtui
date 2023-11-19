@@ -68,6 +68,8 @@ type Action struct {
 }
 
 type Actionable interface {
+	Resource
+
 	// Actions returns the list of actions that can be performed on the resource.
 	Actions() []Action
 }

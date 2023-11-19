@@ -39,37 +39,57 @@ func (run JobRun) Delete(_ context.Context, _ resource.Storer, _ *scw.Client) er
 }
 
 func (run JobRun) Actions() []resource.Action {
-	return []resource.Action{
-		{
-			Name: "Retry",
-			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
-				api := sdk.NewAPI(client)
-				r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
-					ID:     run.JobDefinition.ID,
-					Region: run.JobDefinition.Region,
-				})
-				if err != nil {
-					return err
-				}
+	runAgain := resource.Action{
+		Name: "Start new run",
+		Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+			api := sdk.NewAPI(client)
+			r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
+				ID:     run.JobDefinition.ID,
+				Region: run.JobDefinition.Region,
+			})
+			if err != nil {
+				return err
+			}
 
-				retriedRun := &JobRun{
-					JobRun:        *r,
-					JobDefinition: run.JobDefinition,
-				}
+			retriedRun := &JobRun{
+				JobRun:        *r,
+				JobDefinition: run.JobDefinition,
+			}
 
-				err = s.Store(ctx, retriedRun)
-				if err != nil {
-					return err
-				}
+			err = s.Store(ctx, retriedRun)
+			if err != nil {
+				return err
+			}
 
-				go func() {
-					_ = retriedRun.pollUntilTerminated(ctx, s, client)
-				}()
+			go func() {
+				_ = retriedRun.pollUntilTerminated(ctx, s, client)
+			}()
 
-				return nil
-			},
+			return nil
 		},
 	}
+
+	if run.State == sdk.JobRunStateFailed {
+		runAgain.Name = "Retry"
+	}
+
+	actions := []resource.Action{runAgain}
+
+	if run.State == sdk.JobRunStateQueued || run.State == sdk.JobRunStateRunning {
+		actions = append(actions, resource.Action{
+			Name: "Cancel",
+			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+				api := sdk.NewAPI(client)
+				_, err := api.StopJobRun(&sdk.StopJobRunRequest{
+					ID:     run.ID,
+					Region: run.Region,
+				})
+				return err
+			},
+		})
+	}
+
+	return actions
 }
 
 func (run JobRun) pollUntilTerminated(ctx context.Context, s resource.Storer, client *scw.Client) error {
