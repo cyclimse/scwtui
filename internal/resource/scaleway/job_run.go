@@ -34,14 +34,14 @@ func (run JobRun) CockpitMetadata() resource.CockpitMetadata {
 }
 
 // Delete is a no-op because job the lifecycle of a job run is managed by the job itself.
-func (run JobRun) Delete(_ context.Context, _ resource.Storer, _ *scw.Client) error {
+func (run JobRun) Delete(_ context.Context, _ resource.Indexer, _ *scw.Client) error {
 	return nil
 }
 
 func (run JobRun) Actions() []resource.Action {
 	runAgain := resource.Action{
 		Name: "Start new run",
-		Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+		Do: func(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 			api := sdk.NewAPI(client)
 			r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
 				JobDefinitionID: run.JobDefinition.ID,
@@ -56,13 +56,12 @@ func (run JobRun) Actions() []resource.Action {
 				JobDefinition: run.JobDefinition,
 			}
 
-			err = s.Store(ctx, retriedRun)
-			if err != nil {
+			if err := index.Index(ctx, retriedRun); err != nil {
 				return err
 			}
 
 			go func() {
-				_ = retriedRun.pollUntilTerminated(ctx, s, client)
+				_ = retriedRun.pollUntilTerminated(ctx, index, client)
 			}()
 
 			return nil
@@ -78,7 +77,7 @@ func (run JobRun) Actions() []resource.Action {
 	if run.State == sdk.JobRunStateQueued || run.State == sdk.JobRunStateRunning {
 		actions = append(actions, resource.Action{
 			Name: "Cancel",
-			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+			Do: func(ctx context.Context, _ resource.Indexer, client *scw.Client) error {
 				api := sdk.NewAPI(client)
 				_, err := api.StopJobRun(&sdk.StopJobRunRequest{
 					JobRunID: run.ID,
@@ -92,7 +91,7 @@ func (run JobRun) Actions() []resource.Action {
 	return actions
 }
 
-func (run JobRun) pollUntilTerminated(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (run JobRun) pollUntilTerminated(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	for {
 		r, err := api.GetJobRun(&sdk.GetJobRunRequest{
@@ -104,8 +103,7 @@ func (run JobRun) pollUntilTerminated(ctx context.Context, s resource.Storer, cl
 		}
 
 		run.JobRun = *r
-
-		if err = s.Store(ctx, run); err != nil {
+		if err := index.Index(ctx, run); err != nil {
 			return err
 		}
 

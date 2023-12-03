@@ -31,7 +31,7 @@ func (c KapsuleCluster) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (c KapsuleCluster) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (c KapsuleCluster) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeleteCluster(&sdk.DeleteClusterRequest{
 		ClusterID: c.ID,
@@ -41,5 +41,5 @@ func (c KapsuleCluster) Delete(ctx context.Context, s resource.Storer, client *s
 		return err
 	}
 
-	return s.DeleteResource(ctx, c)
+	return index.Deindex(ctx, c)
 }

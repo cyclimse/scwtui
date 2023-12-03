@@ -53,7 +53,7 @@ type deletionResultMsg struct {
 
 func deleteResource(state ui.ApplicationState, r resource.Resource) tea.Cmd {
 	return func() tea.Msg {
-		err := r.Delete(context.Background(), state.Store, state.ScwClient)
+		err := r.Delete(context.Background(), resource.NewIndex(state.Store, state.Search), state.ScwClient)
 		return deletionResultMsg{
 			err: err,
 		}

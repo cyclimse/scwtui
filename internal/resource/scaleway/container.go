@@ -37,7 +37,7 @@ func (c Container) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (c Container) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (c Container) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeleteContainer(&sdk.DeleteContainerRequest{
 		ContainerID: c.ID,
@@ -47,5 +47,5 @@ func (c Container) Delete(ctx context.Context, s resource.Storer, client *scw.Cl
 		return err
 	}
 
-	return s.DeleteResource(ctx, c)
+	return index.Deindex(ctx, c)
 }

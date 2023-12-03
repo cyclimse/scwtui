@@ -27,7 +27,7 @@ func (def JobDefinition) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (def JobDefinition) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (def JobDefinition) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	err := api.DeleteJobDefinition(&sdk.DeleteJobDefinitionRequest{
 		JobDefinitionID: def.ID,
@@ -37,14 +37,14 @@ func (def JobDefinition) Delete(ctx context.Context, s resource.Storer, client *
 		return err
 	}
 
-	return s.DeleteResource(ctx, def)
+	return index.Deindex(ctx, def)
 }
 
 func (def JobDefinition) Actions() []resource.Action {
 	return []resource.Action{
 		{
 			Name: "Start",
-			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+			Do: func(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 				api := sdk.NewAPI(client)
 				r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
 					JobDefinitionID: def.ID,
@@ -59,13 +59,12 @@ func (def JobDefinition) Actions() []resource.Action {
 					JobDefinition: sdk.JobDefinition(def),
 				}
 
-				err = s.Store(ctx, startedRun)
-				if err != nil {
+				if err := index.Index(ctx, startedRun); err != nil {
 					return err
 				}
 
 				go func() {
-					_ = startedRun.pollUntilTerminated(ctx, s, client)
+					_ = startedRun.pollUntilTerminated(ctx, index, client)
 				}()
 
 				return nil

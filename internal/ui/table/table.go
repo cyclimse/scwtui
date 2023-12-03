@@ -95,27 +95,9 @@ func (m *Model) rebuildTable() {
 	}
 }
 
-// resourceHaveChanged returns true if the resources have changed.
-// Avoids rebuilding the table if the resources have not changed.
-func resourceHaveChanged(a, b []resource.Resource) bool {
-	if len(a) != len(b) {
-		return true
-	}
-
-	for i, r := range a {
-		if r != b[i] {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (m *Model) UpdateResources(resources []resource.Resource) {
-	if resourceHaveChanged(m.resources, resources) {
-		m.resources = resources
-		m.rebuildTable()
-	}
+	m.resources = resources
+	m.rebuildTable()
 }
 
 func (m *Model) SelectedResource() resource.Resource {

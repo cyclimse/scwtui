@@ -29,7 +29,7 @@ func (ns ContainerNamespace) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (ns ContainerNamespace) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (ns ContainerNamespace) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeleteNamespace(&sdk.DeleteNamespaceRequest{
 		NamespaceID: ns.ID,
@@ -39,5 +39,5 @@ func (ns ContainerNamespace) Delete(ctx context.Context, s resource.Storer, clie
 		return err
 	}
 
-	return s.DeleteResource(ctx, ns)
+	return index.Deindex(ctx, ns)
 }

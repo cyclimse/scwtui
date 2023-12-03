@@ -29,7 +29,7 @@ func (app IAMApplication) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (app IAMApplication) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (app IAMApplication) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := iam.NewAPI(client)
 	err := api.DeleteApplication(&iam.DeleteApplicationRequest{
 		ApplicationID: app.ID,
@@ -38,5 +38,5 @@ func (app IAMApplication) Delete(ctx context.Context, s resource.Storer, client 
 		return err
 	}
 
-	return s.DeleteResource(ctx, app)
+	return index.Deindex(ctx, app)
 }

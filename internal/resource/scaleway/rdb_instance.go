@@ -31,7 +31,7 @@ func (i RdbInstance) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (i RdbInstance) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (i RdbInstance) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := rdb.NewAPI(client)
 	_, err := api.DeleteInstance(&rdb.DeleteInstanceRequest{
 		InstanceID: i.ID,
@@ -41,5 +41,5 @@ func (i RdbInstance) Delete(ctx context.Context, s resource.Storer, client *scw.
 		return err
 	}
 
-	return s.DeleteResource(ctx, i)
+	return index.Deindex(ctx, i)
 }
