@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+//nolint:funlen // this is a test
 func TestSearch_Search(t *testing.T) {
 	projectID := gofakeit.UUID()
 	projectName := gofakeit.Name()
@@ -68,7 +69,14 @@ func TestSearch_Search(t *testing.T) {
 
 			got, err := search.Search(ctx, test.query)
 			require.NoError(t, err)
-			require.ElementsMatch(t, test.want, got)
+
+			wantMap := make(resource.SetOfIDs, len(test.want))
+
+			for _, id := range test.want {
+				wantMap[id] = struct{}{}
+			}
+
+			require.Equal(t, wantMap, got)
 		})
 	}
 }
