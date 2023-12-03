@@ -7,9 +7,9 @@ import (
 	"fmt"
 
 	"github.com/cyclimse/scwtui/internal/resource"
-	"github.com/cyclimse/scwtui/internal/store/sqlite/db"
 )
 
+// GetResource implements resource.Storer.
 func (s *Store) GetResource(ctx context.Context, resourceID string) (resource.Resource, error) {
 	r, err := s.queries.GetResource(ctx, resourceID)
 	if err != nil {
@@ -38,32 +38,6 @@ func (s *Store) ListAllResources(ctx context.Context) ([]resource.Resource, erro
 		}
 
 		resources = append(resources, r)
-	}
-
-	return resources, nil
-}
-
-// FindTypedByPredicateInProject finds all the resources of a given type in a project that match a predicate.
-func (s *Store) FindTypedByPredicateInProject(ctx context.Context, resourceType resource.Type, projectID string, predicate resource.Predicate) ([]resource.Resource, error) {
-	rows, err := s.queries.ListTypedResourcesInProject(ctx, db.ListTypedResourcesInProjectParams{
-		ProjectID: projectID,
-		Type:      int64(resourceType),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("store: failed to list resources in project %s: %w", projectID, err)
-	}
-
-	resources := make([]resource.Resource, 0, len(rows))
-
-	for _, row := range rows {
-		r, err := s.unmarshaller.UnmarshalResource(resource.Type(row.Type), row.Data.(string))
-		if err != nil {
-			return nil, err
-		}
-
-		if predicate(r) {
-			resources = append(resources, r)
-		}
 	}
 
 	return resources, nil
