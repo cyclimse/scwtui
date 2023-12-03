@@ -30,8 +30,8 @@ func (def JobDefinition) CockpitMetadata() resource.CockpitMetadata {
 func (def JobDefinition) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	err := api.DeleteJobDefinition(&sdk.DeleteJobDefinitionRequest{
-		JobDefinitionID:     def.ID,
-		Region: def.Region,
+		JobDefinitionID: def.ID,
+		Region:          def.Region,
 	})
 	if err != nil {
 		return err
@@ -47,8 +47,8 @@ func (def JobDefinition) Actions() []resource.Action {
 			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
 				api := sdk.NewAPI(client)
 				r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
-					JobDefinitionID:     def.ID,
-					Region: def.Region,
+					JobDefinitionID: def.ID,
+					Region:          def.Region,
 				})
 				if err != nil {
 					return err
