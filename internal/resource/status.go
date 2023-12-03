@@ -19,13 +19,18 @@ const (
 	StatusCanceled Status = "canceled"
 )
 
-func (s *Status) Emoji() rune {
+func (s *Status) Emoji(resourceType Type) rune {
 	if s == nil {
 		return ' '
 	}
 
 	switch *s {
-	case StatusActive, StatusReady, StatusRunning, StatusSucceded:
+	case StatusActive, StatusReady, StatusSucceded:
+		return '✅'
+	case StatusRunning:
+		if resourceType == TypeJobRun {
+			return '🏃'
+		}
 		return '✅'
 	case StatusPending, StatusQueued:
 		return '🕒'

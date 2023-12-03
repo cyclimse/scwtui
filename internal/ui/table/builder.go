@@ -1,9 +1,9 @@
 package table
 
 import (
-	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scwtui/internal/resource"
+	table "github.com/cyclimse/scwtui/internal/ui/table/custom"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -72,7 +72,7 @@ func (b *Build) buildRows(params BuildParams) []table.Row {
 		metadata := r.Metadata()
 
 		rows = append(rows, table.Row{
-			lipgloss.PlaceHorizontal(6, lipgloss.Center, string(metadata.Status.Emoji())),
+			lipgloss.PlaceHorizontal(6, lipgloss.Center, string(metadata.Status.Emoji(metadata.Type))),
 			metadata.Name,
 			metadata.Type.String(),
 			params.ProjectIDsToNames[metadata.ProjectID],
@@ -90,7 +90,7 @@ func (b *Build) buildRowsAlt(params BuildParams) []table.Row {
 	for _, r := range resources {
 		metadata := r.Metadata()
 		rows = append(rows, table.Row{
-			lipgloss.PlaceHorizontal(6, lipgloss.Center, string(metadata.Status.Emoji())),
+			lipgloss.PlaceHorizontal(6, lipgloss.Center, string(metadata.Status.Emoji(metadata.Type))),
 			metadata.ID,
 			metadata.Type.String(),
 			metadata.ProjectID,
