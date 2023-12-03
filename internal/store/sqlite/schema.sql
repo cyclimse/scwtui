@@ -9,5 +9,7 @@ CREATE TABLE resources (
     locality char(100) NOT NULL,
     -- JSON data of the resource
     json_data NOT NULL,
-    PRIMARY KEY (id)
+    -- Some resources may share the same id, but have different types
+    -- Example: a Cockpit in a project will use the same id as the project
+    PRIMARY KEY (id, type)
 );

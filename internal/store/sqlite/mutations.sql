@@ -18,7 +18,7 @@ VALUES (
         :type,
         :locality,
         json(:data)
-    ) ON CONFLICT (id) DO
+    ) ON CONFLICT (id, type) DO
 UPDATE
 SET name = excluded.name,
     project_id = excluded.project_id,
