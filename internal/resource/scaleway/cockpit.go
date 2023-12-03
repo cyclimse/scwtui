@@ -18,6 +18,7 @@ func (c Cockpit) Metadata() resource.Metadata {
 		ProjectID:   c.ProjectID,
 		Status:      statusPtr(c.Status),
 		Description: nil,
+		CreatedAt:   c.CreatedAt,
 		Tags:        nil,
 		Type:        resource.TypeCockpit,
 		Locality:    resource.Global,

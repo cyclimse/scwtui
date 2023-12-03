@@ -17,6 +17,7 @@ func (c KapsuleCluster) Metadata() resource.Metadata {
 		ProjectID:   c.ProjectID,
 		Status:      statusPtr(c.Status),
 		Description: &c.Description,
+		CreatedAt:   c.CreatedAt,
 		Tags:        c.Tags,
 		Type:        resource.TypeKapsuleCluster,
 		Locality:    resource.Region(c.Region),

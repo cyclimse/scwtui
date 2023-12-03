@@ -17,6 +17,7 @@ func (app IAMApplication) Metadata() resource.Metadata {
 		ProjectID:   "",
 		Status:      nil,
 		Description: &app.Description,
+		CreatedAt:   app.CreatedAt,
 		Tags:        nil,
 		Type:        resource.TypeIAMApplication,
 		Locality:    resource.Global,

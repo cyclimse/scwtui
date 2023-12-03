@@ -17,6 +17,7 @@ func (i Instance) Metadata() resource.Metadata {
 		ProjectID:   i.Project,
 		Status:      statusPtr(i.State),
 		Description: nil,
+		CreatedAt:   i.CreationDate,
 		Tags:        i.Tags,
 		Type:        resource.TypeInstance,
 		Locality:    resource.Zone(i.Zone),

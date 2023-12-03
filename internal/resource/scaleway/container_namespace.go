@@ -17,6 +17,7 @@ func (ns ContainerNamespace) Metadata() resource.Metadata {
 		ProjectID:   ns.ProjectID,
 		Status:      statusPtr(ns.Status),
 		Description: ns.Description,
+		CreatedAt:   nil,
 		Tags:        nil,
 		Type:        resource.TypeContainerNamespace,
 		Locality:    resource.Region(ns.Region),

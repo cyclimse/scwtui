@@ -17,6 +17,7 @@ func (ns RegistryNamespace) Metadata() resource.Metadata {
 		ProjectID:   ns.ProjectID,
 		Status:      statusPtr(ns.Status),
 		Description: &ns.Description,
+		CreatedAt:   ns.CreatedAt,
 		Tags:        nil,
 		Type:        resource.TypeRegistryNamespace,
 		Locality:    resource.Region(ns.Region),

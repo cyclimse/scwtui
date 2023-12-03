@@ -53,6 +53,7 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect
+	github.com/xeonx/timeago v1.0.0-rc5 // indirect
 	go.etcd.io/bbolt v1.3.8 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
