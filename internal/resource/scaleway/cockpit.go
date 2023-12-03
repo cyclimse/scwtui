@@ -30,7 +30,7 @@ func (c Cockpit) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (c Cockpit) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (c Cockpit) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewAPI(client)
 	_, err := api.DeactivateCockpit(&sdk.DeactivateCockpitRequest{
 		ProjectID: c.ProjectID,
@@ -46,14 +46,14 @@ func (c Cockpit) Delete(ctx context.Context, s resource.Storer, client *scw.Clie
 		return err
 	}
 
-	return s.DeleteResource(ctx, c)
+	return index.Deindex(ctx, c)
 }
 
 func (c Cockpit) Actions() []resource.Action {
 	return []resource.Action{
 		{
 			Name: "Open Grafana",
-			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+			Do: func(_ context.Context, _ resource.Indexer, _ *scw.Client) error {
 				return browser.OpenURL(c.Endpoints.GrafanaURL)
 			},
 		},

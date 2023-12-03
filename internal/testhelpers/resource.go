@@ -20,6 +20,6 @@ func (f *MockResource) CockpitMetadata() resource.CockpitMetadata {
 	return f.CockpitMetadataValue
 }
 
-func (f *MockResource) Delete(_ context.Context, _ resource.Storer, _ *scw.Client) error {
+func (f *MockResource) Delete(_ context.Context, _ resource.Indexer, _ *scw.Client) error {
 	return nil
 }

@@ -56,7 +56,8 @@ type Resource interface {
 	CockpitMetadata() CockpitMetadata
 
 	// Delete deletes the resource.
-	Delete(ctx context.Context, s Storer, client *scw.Client) error
+	// It will also remove the resource from the index.
+	Delete(ctx context.Context, index Indexer, client *scw.Client) error
 }
 
 type Action struct {
@@ -64,7 +65,9 @@ type Action struct {
 	Name string
 
 	// Do performs the action on the resource.
-	Do func(ctx context.Context, s Storer, client *scw.Client) error
+	// It should return an error if the action failed.
+	// The index is provided to add or delete resources.
+	Do func(ctx context.Context, index Indexer, client *scw.Client) error
 }
 
 type Actionable interface {

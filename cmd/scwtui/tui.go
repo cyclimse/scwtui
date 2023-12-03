@@ -120,9 +120,9 @@ func (cmd *TuiCmd) Run(rs *RootState) error {
 	m := scenes.Root(appState)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	// defer cancel()
+	defer cancel()
 
-	g := start(ctx, logger, discoverer, store, search)
+	g := start(ctx, logger, discoverer, resource.NewIndex(store, search))
 
 	g.Go(func() error {
 		if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
@@ -146,7 +146,7 @@ const (
 	channelBufferSize = 100
 )
 
-func start(ctx context.Context, logger *slog.Logger, discoverer discovery.ResourceDiscoverer, store resource.Storer, search resource.Searcher) *errgroup.Group {
+func start(ctx context.Context, logger *slog.Logger, discoverer discovery.ResourceDiscoverer, index resource.Indexer) *errgroup.Group {
 	g, runCtx := errgroup.WithContext(ctx)
 
 	ch := make(chan resource.Resource, channelBufferSize)
@@ -157,7 +157,7 @@ func start(ctx context.Context, logger *slog.Logger, discoverer discovery.Resour
 			if errors.Is(err, context.Canceled) {
 				return nil
 			}
-			slog.Error("tui: failed to discover resources", slog.String("err", err.Error()))
+			logger.Error("tui: failed to discover resources", slog.String("err", err.Error()))
 		}
 		return err
 	})
@@ -170,11 +170,7 @@ func start(ctx context.Context, logger *slog.Logger, discoverer discovery.Resour
 				if !ok {
 					return nil
 				}
-				if err := store.Store(runCtx, r); err != nil {
-					logger.Error("tui: failed to store resource", slog.Any("resource", r), slog.Any("err", err.Error()))
-					return err
-				}
-				if err := search.Index(r); err != nil {
+				if err := index.Index(runCtx, r); err != nil {
 					logger.Error("tui: failed to index resource", slog.Any("resource", r), slog.String("err", err.Error()))
 					return err
 				}

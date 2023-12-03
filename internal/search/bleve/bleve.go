@@ -74,3 +74,7 @@ func (s *Search) Index(r resource.Resource) error {
 		Region:   region,
 	})
 }
+
+func (s *Search) Deindex(r resource.Resource) error {
+	return s.index.Delete(r.Metadata().ID)
+}

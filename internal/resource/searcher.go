@@ -8,4 +8,7 @@ type Searcher interface {
 
 	// Index indexes a resource.
 	Index(r Resource) error
+
+	// Deindex deindexes a resource.
+	Deindex(r Resource) error
 }

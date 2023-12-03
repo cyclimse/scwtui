@@ -30,7 +30,7 @@ func (p Project) CockpitMetadata() resource.CockpitMetadata {
 	}
 }
 
-func (p Project) Delete(ctx context.Context, s resource.Storer, client *scw.Client) error {
+func (p Project) Delete(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 	api := sdk.NewProjectAPI(client)
 	err := api.DeleteProject(&sdk.ProjectAPIDeleteProjectRequest{
 		ProjectID: p.ID,
@@ -39,14 +39,14 @@ func (p Project) Delete(ctx context.Context, s resource.Storer, client *scw.Clie
 		return err
 	}
 
-	return s.DeleteResource(ctx, p)
+	return index.Deindex(ctx, p)
 }
 
 func (p Project) Actions() []resource.Action {
 	return []resource.Action{
 		{
 			Name: "Activate Cockpit",
-			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
+			Do: func(ctx context.Context, index resource.Indexer, client *scw.Client) error {
 				api := cockpit_sdk.NewAPI(client)
 				_, err := api.ActivateCockpit(&cockpit_sdk.ActivateCockpitRequest{
 					ProjectID: p.ID,
@@ -62,7 +62,7 @@ func (p Project) Actions() []resource.Action {
 					return err
 				}
 
-				return s.Store(ctx, Cockpit(*cockpit))
+				return index.Index(ctx, Cockpit(*cockpit))
 			},
 		},
 	}

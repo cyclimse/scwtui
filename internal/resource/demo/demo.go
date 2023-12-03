@@ -30,6 +30,6 @@ func (r Resource) CockpitMetadata() resource.CockpitMetadata {
 	return r.CockpitMetadataValue
 }
 
-func (r Resource) Delete(_ context.Context, _ resource.Storer, _ *scw.Client) error {
+func (r Resource) Delete(_ context.Context, _ resource.Indexer, _ *scw.Client) error {
 	return nil
 }

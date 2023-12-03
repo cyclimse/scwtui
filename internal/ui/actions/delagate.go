@@ -31,7 +31,7 @@ type ActionResultMsg struct {
 
 func (a Action) Command(state ui.ApplicationState) tea.Cmd {
 	return func() tea.Msg {
-		return ActionResultMsg{Err: a.Do(context.Background(), state.Store, state.ScwClient)}
+		return ActionResultMsg{Err: a.Do(context.Background(), resource.NewIndex(state.Store, state.Search), state.ScwClient)}
 	}
 }
 
