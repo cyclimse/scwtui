@@ -29,8 +29,8 @@ func (d *ResourceDiscover) discoverJobsInRegion(ctx context.Context, region scw.
 		resources = append(resources, scaleway.JobDefinition(*jobDef))
 
 		jobRuns, err := api.ListJobRuns(&sdk.ListJobRunsRequest{
-			Region: region,
-			ID:     &jobDef.ID,
+			Region:          region,
+			JobDefinitionID: &jobDef.ID,
 		}, scw.WithAllPages(), scw.WithContext(ctx))
 		if handleRequestError(err) != nil {
 			return nil, err
