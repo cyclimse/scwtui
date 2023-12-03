@@ -7,6 +7,8 @@ import (
 	"github.com/cyclimse/scwtui/internal/resource"
 )
 
+const numberOfResults = 100
+
 func NewSearch(projectIDsToNames map[string]string) (*Search, error) {
 	mapping := bleve.NewIndexMapping()
 	mapping.DefaultAnalyzer = "standard"
@@ -27,17 +29,20 @@ type Search struct {
 	projectIDsToNames map[string]string
 }
 
-func (s *Search) Search(ctx context.Context, query string) ([]string, error) {
+func (s *Search) Search(ctx context.Context, query string) (resource.SetOfIDs, error) {
 	q := bleve.NewQueryStringQuery(query)
 	search := bleve.NewSearchRequest(q)
+	search.Size = numberOfResults
+
 	searchResults, err := s.index.SearchInContext(ctx, search)
 	if err != nil {
 		return nil, err
 	}
 
-	var ids []string
+	ids := make(resource.SetOfIDs, len(searchResults.Hits))
+
 	for _, hit := range searchResults.Hits {
-		ids = append(ids, hit.ID)
+		ids[hit.ID] = struct{}{}
 	}
 
 	return ids, nil

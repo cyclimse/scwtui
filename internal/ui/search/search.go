@@ -36,30 +36,23 @@ func (m Model) Init() tea.Cmd {
 }
 
 type ResultsMsg struct {
-	Resources []resource.Resource
+	IDs resource.SetOfIDs
 }
 
 func searchResources(state ui.ApplicationState, query string) tea.Cmd {
 	return func() tea.Msg {
 		ctx := context.Background()
+		logger := state.Logger.With(slog.String("component", "search"))
+
 		resourceIDs, err := state.Search.Search(ctx, query)
 		if err != nil {
-			state.Logger.Error("failed to search resources", slog.String("error", err.Error()))
-			return ResultsMsg{
-				Resources: []resource.Resource{},
-			}
+			logger.Error("failed to search resources", slog.String("error", err.Error()))
+			return ResultsMsg{IDs: resource.SetOfIDs{}}
 		}
 
-		state.Logger.Debug("search results", slog.Int("num_results", len(resourceIDs)), slog.String("query", query))
+		logger.Debug("search results", slog.Int("num_results", len(resourceIDs)), slog.String("query", query))
 
-		resources, err := state.Store.ListResourcesByIDs(ctx, resourceIDs)
-		if err != nil {
-			state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
-		}
-
-		return ResultsMsg{
-			Resources: resources,
-		}
+		return ResultsMsg{IDs: resourceIDs}
 	}
 }
 
@@ -87,6 +80,11 @@ func (m Model) View() string {
 // Dirty returns true if the text input is dirty.
 func (m Model) Dirty() bool {
 	return m.textInput.Value() != ""
+}
+
+// Value returns the value of the text input.
+func (m Model) Value() string {
+	return m.textInput.Value()
 }
 
 // Focus focuses the text input.

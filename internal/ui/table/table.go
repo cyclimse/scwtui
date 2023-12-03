@@ -95,6 +95,10 @@ func (m *Model) rebuildTable() {
 	}
 }
 
+func (m Model) Resources() []resource.Resource {
+	return m.resources
+}
+
 func (m *Model) UpdateResources(resources []resource.Resource) {
 	m.resources = resources
 	m.rebuildTable()

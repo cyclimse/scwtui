@@ -24,7 +24,9 @@ const refreshInterval = 3 * time.Second
 
 func Root(state ui.ApplicationState) tea.Model {
 	m := Model{
-		state:   state,
+		state:  state,
+		logger: state.Logger.With(slog.String("component", "root")),
+
 		focused: ui.TableFocused,
 
 		header: header.Header(ui.TableFocused, state),
@@ -39,14 +41,14 @@ type refreshPeriodicallyMsg struct {
 	Resources []resource.Resource
 }
 
-func refreshEvery(state ui.ApplicationState, d time.Duration) tea.Cmd {
+func refreshEvery(state ui.ApplicationState, logger *slog.Logger, d time.Duration) tea.Cmd {
 	return tea.Every(d, func(t time.Time) tea.Msg {
 		ctx, cancel := context.WithDeadline(context.Background(), t.Add(d))
 		defer cancel()
 
 		resources, err := state.Store.ListAllResources(ctx)
 		if err != nil {
-			state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
+			logger.Error("failed to list resources", slog.String("error", err.Error()))
 			return refreshPeriodicallyMsg{Resources: []resource.Resource{}}
 		}
 
@@ -62,7 +64,7 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(
 		tea.EnterAltScreen,
 		// on startup, refresh the resources quicker than the default interval.
-		refreshEvery(m.state, time.Second),
+		refreshEvery(m.state, m.logger, 1*time.Second),
 		m.header.Init(),
 		m.search.Init(),
 		m.table.Init(),
@@ -77,16 +79,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		return m.updateWindowsResize(msg), nil
 	case refreshPeriodicallyMsg:
-		// if the search input is dirty, don't update the table.
-		if !m.search.Dirty() {
+		if m.search.Dirty() {
+			filterIDs, err := m.state.Search.Search(context.Background(), m.search.Value())
+			if err != nil {
+				m.logger.Error("failed to search resources", slog.String("error", err.Error()))
+				return m, nil
+			}
+
+			m.table.UpdateResources(ui.ApplyIDsFilter(msg.Resources, filterIDs))
+		} else {
 			m.table.UpdateResources(msg.Resources)
 		}
-		return m, refreshEvery(m.state, refreshInterval)
+		return m, refreshEvery(m.state, m.logger, refreshInterval)
 	case refreshOnceMsg:
 		m.table.UpdateResources(msg.Resources)
 		return m, nil
 	case search.ResultsMsg:
-		m.table.UpdateResources(msg.Resources)
+		m.table.UpdateResources(ui.ApplyIDsFilter(m.table.Resources(), msg.IDs))
 		return m, nil
 	case ui.Focused:
 		// this is used to set the focus asynchroniously
@@ -258,7 +267,7 @@ func (m *Model) setFocused(focused ui.Focused) tea.Cmd {
 				ctx := context.Background()
 				resources, err := m.state.Store.ListAllResources(ctx)
 				if err != nil {
-					m.state.Logger.Error("failed to list resources", slog.String("error", err.Error()))
+					m.logger.Error("failed to list resources", slog.String("error", err.Error()))
 					return refreshOnceMsg{Resources: []resource.Resource{}}
 				}
 				return refreshOnceMsg{Resources: resources}
@@ -305,7 +314,9 @@ func (m Model) updateWindowsResize(msg tea.WindowSizeMsg) Model {
 }
 
 type Model struct {
-	state   ui.ApplicationState
+	state  ui.ApplicationState
+	logger *slog.Logger
+
 	focused ui.Focused
 
 	header   header.Model
