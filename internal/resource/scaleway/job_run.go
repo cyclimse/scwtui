@@ -44,8 +44,8 @@ func (run JobRun) Actions() []resource.Action {
 		Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
 			api := sdk.NewAPI(client)
 			r, err := api.StartJobDefinition(&sdk.StartJobDefinitionRequest{
-				ID:     run.JobDefinition.ID,
-				Region: run.JobDefinition.Region,
+				JobDefinitionID: run.JobDefinition.ID,
+				Region:          run.JobDefinition.Region,
 			})
 			if err != nil {
 				return err
@@ -81,8 +81,8 @@ func (run JobRun) Actions() []resource.Action {
 			Do: func(ctx context.Context, s resource.Storer, client *scw.Client) error {
 				api := sdk.NewAPI(client)
 				_, err := api.StopJobRun(&sdk.StopJobRunRequest{
-					ID:     run.ID,
-					Region: run.Region,
+					JobRunID: run.ID,
+					Region:   run.Region,
 				})
 				return err
 			},
@@ -96,8 +96,8 @@ func (run JobRun) pollUntilTerminated(ctx context.Context, s resource.Storer, cl
 	api := sdk.NewAPI(client)
 	for {
 		r, err := api.GetJobRun(&sdk.GetJobRunRequest{
-			ID:     run.ID,
-			Region: run.Region,
+			JobRunID: run.ID,
+			Region:   run.Region,
 		})
 		if err != nil {
 			return err
