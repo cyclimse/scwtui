@@ -68,29 +68,3 @@ func (s *Store) FindTypedByPredicateInProject(ctx context.Context, resourceType 
 
 	return resources, nil
 }
-
-// ListResourcesByIDs implements resource.Storer.
-func (s *Store) ListResourcesByIDs(ctx context.Context, ids []string) ([]resource.Resource, error) {
-	queryIds := make([]interface{}, len(ids))
-	for i, id := range ids {
-		queryIds[i] = id
-	}
-
-	rows, err := s.queries.ListResourcesByIDs(ctx, queryIds)
-	if err != nil {
-		return nil, fmt.Errorf("store: failed to list resources by ids: %w", err)
-	}
-
-	resources := make([]resource.Resource, 0, len(rows))
-
-	for _, row := range rows {
-		r, err := s.unmarshaller.UnmarshalResource(resource.Type(row.Type), row.Data.(string))
-		if err != nil {
-			return nil, err
-		}
-
-		resources = append(resources, r)
-	}
-
-	return resources, nil
-}

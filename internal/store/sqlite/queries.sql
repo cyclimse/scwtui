@@ -19,11 +19,3 @@ FROM resources
 WHERE project_id = ?
     AND type = ?
 ORDER BY resources.name ASC;
-
-
--- name: ListResourcesByIDs :many
-SELECT resources.type,
-    resources.json_data AS data
-FROM resources
-WHERE id IN (sqlc.slice(ids))
-ORDER BY resources.name ASC;
