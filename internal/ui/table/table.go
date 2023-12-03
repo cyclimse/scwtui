@@ -2,12 +2,12 @@ package table
 
 import (
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scwtui/internal/resource"
 	"github.com/cyclimse/scwtui/internal/ui"
 	"github.com/cyclimse/scwtui/internal/ui/header"
+	table "github.com/cyclimse/scwtui/internal/ui/table/custom"
 )
 
 const (
@@ -68,13 +68,15 @@ func (m *Model) toggleAltView() {
 
 func (m *Model) rebuildTable() {
 	previous := struct {
-		width  int
-		height int
-		cursor int
+		width   int
+		height  int
+		cursor  int
+		yoffset int
 	}{
-		width:  m.table.Width(),
-		height: m.table.Height(),
-		cursor: m.table.Cursor(),
+		width:   m.table.Width(),
+		height:  m.table.Height(),
+		cursor:  m.table.Cursor(),
+		yoffset: m.table.YOffset(),
 	}
 
 	m.table = m.builder.Build(BuildParams{
@@ -87,11 +89,33 @@ func (m *Model) rebuildTable() {
 	m.table.SetWidth(previous.width)
 	m.table.SetHeight(previous.height)
 	m.table.SetCursor(previous.cursor)
+
+	if previous.yoffset > 0 {
+		m.table.SetYOffset(previous.yoffset)
+	}
+}
+
+// resourceHaveChanged returns true if the resources have changed.
+// Avoids rebuilding the table if the resources have not changed.
+func resourceHaveChanged(a, b []resource.Resource) bool {
+	if len(a) != len(b) {
+		return true
+	}
+
+	for i, r := range a {
+		if r != b[i] {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m *Model) UpdateResources(resources []resource.Resource) {
-	m.resources = resources
-	m.rebuildTable()
+	if resourceHaveChanged(m.resources, resources) {
+		m.resources = resources
+		m.rebuildTable()
+	}
 }
 
 func (m *Model) SelectedResource() resource.Resource {
