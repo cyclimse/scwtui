@@ -16,6 +16,7 @@ func (def JobDefinition) Metadata() resource.Metadata {
 		Name:        def.Name,
 		ProjectID:   def.ProjectID,
 		Description: &def.Description,
+		CreatedAt:   def.CreatedAt,
 		Type:        resource.TypeJobDefinition,
 		Locality:    resource.Region(def.Region),
 	}

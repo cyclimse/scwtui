@@ -17,6 +17,7 @@ func (i RdbInstance) Metadata() resource.Metadata {
 		ProjectID:   i.ProjectID,
 		Status:      statusPtr(i.Status),
 		Description: nil,
+		CreatedAt:   i.CreatedAt,
 		Tags:        i.Tags,
 		Type:        resource.TypeRdbInstance,
 		Locality:    resource.Region(i.Region),

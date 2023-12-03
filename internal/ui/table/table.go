@@ -43,7 +43,7 @@ func Table(state ui.ApplicationState) Model {
 func (m Model) Init() tea.Cmd { return nil }
 
 const (
-	additionalHorizontalPadding = 8
+	additionalHorizontalPadding = 10
 	tableHeaderHeight           = 4
 )
 

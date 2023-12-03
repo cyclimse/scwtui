@@ -16,12 +16,14 @@ type JobRun struct {
 
 func (run JobRun) Metadata() resource.Metadata {
 	return resource.Metadata{
-		ID:        run.ID,
-		Name:      run.JobDefinition.Name,
-		ProjectID: run.JobDefinition.ProjectID,
-		Status:    statusPtr(run.State),
-		Type:      resource.TypeJobRun,
-		Locality:  resource.Region(run.Region),
+		ID:          run.ID,
+		Name:        run.JobDefinition.Name,
+		ProjectID:   run.JobDefinition.ProjectID,
+		Status:      statusPtr(run.State),
+		Description: nil,
+		CreatedAt:   run.CreatedAt,
+		Type:        resource.TypeJobRun,
+		Locality:    resource.Region(run.Region),
 	}
 }
 

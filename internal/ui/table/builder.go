@@ -1,10 +1,14 @@
 package table
 
 import (
+	"sync"
+	"time"
+
 	"github.com/charmbracelet/lipgloss"
 	"github.com/cyclimse/scwtui/internal/resource"
 	table "github.com/cyclimse/scwtui/internal/ui/table/custom"
 	"github.com/mattn/go-runewidth"
+	"github.com/xeonx/timeago"
 )
 
 const widthOfAnUUID = 36
@@ -16,6 +20,7 @@ var (
 		"Name",
 		"Type",
 		"Project",
+		"Created",
 		"Locality",
 	}
 
@@ -24,6 +29,7 @@ var (
 		"ID",
 		"Type",
 		"Project ID",
+		"Created At",
 		"Locality",
 	}
 
@@ -32,13 +38,32 @@ var (
 		"Locality":   runewidth.StringWidth("Locality"),
 		"ID":         widthOfAnUUID,
 		"Project ID": widthOfAnUUID,
+		"Created At": runewidth.StringWidth(time.RFC3339),
+		"Type":       runewidth.StringWidth(resource.TypeContainerNamespace.String()),
+		"Created":    runewidth.StringWidth("about an hour ago"),
 	}
 )
 
 func NewBuilder(styles table.Styles) *Build {
-	return &Build{
-		styles: styles,
+	b := &Build{
+		styles:       styles,
+		timeagoCache: make(map[time.Time]string),
+		mutex:        &sync.Mutex{},
 	}
+
+	timer := time.NewTicker(time.Minute)
+
+	go func() {
+		// purge the cache every minute to allow timeago to update.
+		// eg. "a few seconds ago" -> "a minute ago"
+		for range timer.C {
+			b.mutex.Lock()
+			b.timeagoCache = make(map[time.Time]string)
+			b.mutex.Unlock()
+		}
+	}()
+
+	return b
 }
 
 type BuildParams struct {
@@ -76,6 +101,7 @@ func (b *Build) buildRows(params BuildParams) []table.Row {
 			metadata.Name,
 			metadata.Type.String(),
 			params.ProjectIDsToNames[metadata.ProjectID],
+			b.formattedTimeAgo(metadata.CreatedAt),
 			metadata.Locality.String(),
 		})
 	}
@@ -89,11 +115,18 @@ func (b *Build) buildRowsAlt(params BuildParams) []table.Row {
 
 	for _, r := range resources {
 		metadata := r.Metadata()
+
+		createdAt := ""
+		if metadata.CreatedAt != nil {
+			createdAt = metadata.CreatedAt.Format(time.RFC3339)
+		}
+
 		rows = append(rows, table.Row{
 			lipgloss.PlaceHorizontal(6, lipgloss.Center, string(metadata.Status.Emoji(metadata.Type))),
 			metadata.ID,
 			metadata.Type.String(),
 			metadata.ProjectID,
+			createdAt,
 			metadata.Locality.String(),
 		})
 	}
@@ -119,7 +152,11 @@ func (b *Build) buildCols(params BuildParams) []table.Column {
 		}
 	}
 
-	widthPerColumn := (widthWithPadding - fixedColumnsWidth) / (len(titles) - fixedColumnsCount)
+	widthPerColumn := 0
+	if len(titles) > fixedColumnsCount {
+		widthPerColumn = (widthWithPadding - fixedColumnsWidth) / (len(titles) - fixedColumnsCount)
+	}
+
 	if widthPerColumn < 0 {
 		widthPerColumn = 0
 	}
@@ -139,9 +176,33 @@ func (b *Build) buildCols(params BuildParams) []table.Column {
 		})
 	}
 
+	if widthPerColumn == 0 {
+		cols[len(cols)-1].Width += widthWithPadding - fixedColumnsWidth
+	}
+
 	return cols
 }
 
+func (b Build) formattedTimeAgo(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+
+	if formatted, ok := b.timeagoCache[*t]; ok {
+		return formatted
+	}
+
+	formatted := timeago.English.Format(*t)
+	b.timeagoCache[*t] = formatted
+
+	return formatted
+}
+
 type Build struct {
-	styles table.Styles
+	styles       table.Styles
+	timeagoCache map[time.Time]string
+	mutex        *sync.Mutex
 }

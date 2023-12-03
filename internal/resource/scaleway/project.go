@@ -18,6 +18,7 @@ func (p Project) Metadata() resource.Metadata {
 		ProjectID:   p.ID,
 		Status:      nil,
 		Description: &p.Description,
+		CreatedAt:   p.CreatedAt,
 		Tags:        nil,
 		Type:        resource.TypeProject,
 		Locality:    resource.Global,

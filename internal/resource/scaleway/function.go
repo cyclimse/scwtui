@@ -21,6 +21,7 @@ func (f Function) Metadata() resource.Metadata {
 		ProjectID:   f.Namespace.ProjectID,
 		Status:      statusPtr(f.Function.Status),
 		Description: f.Function.Description,
+		CreatedAt:   nil,
 		Tags:        nil,
 		Type:        resource.TypeFunction,
 		Locality:    resource.Region(f.Function.Region),

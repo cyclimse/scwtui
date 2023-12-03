@@ -2,6 +2,7 @@ package resource
 
 import (
 	"context"
+	"time"
 
 	"github.com/scaleway/scaleway-sdk-go/scw"
 )
@@ -23,6 +24,10 @@ type Metadata struct {
 	// Description is the description of the resource.
 	// May be empty.
 	Description *string `json:"description"`
+
+	// CreatedAt is the date the resource was created.
+	// Maybe nil if not available.
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 
 	// Tags is the list of tags associated with the resource.
 	Tags []string `json:"tags"`
