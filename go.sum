@@ -1,11 +1,9 @@
 github.com/RoaringBitmap/roaring v1.6.0 h1:dc7kRiroETgJcHhWX6BerXkZz2b3JgLGg9nTURJL/og=
 github.com/RoaringBitmap/roaring v1.6.0/go.mod h1:plvDsJQpxOC5bw8LRteu/MLWHsHez/3y6cubLI4/1yE=
-github.com/SerhiiCho/timeago v0.0.0-20231128175802-7b007dc561f3 h1:uMjbcIh1uecu/6PWJFwSF/1GVubBUeOtAsaoI2yEq8M=
-github.com/SerhiiCho/timeago v0.0.0-20231128175802-7b007dc561f3/go.mod h1:EPnGJQJwLfmanxiCk75E/Xy5Cl/ZO7BlVqrank2a/nM=
 github.com/alecthomas/assert/v2 v2.2.1 h1:XivOgYcduV98QCahG8T5XTezV5bylXe+lBxLG2K2ink=
 github.com/alecthomas/assert/v2 v2.2.1/go.mod h1:pXcQ2Asjp247dahGEmsZ6ru0UVwnkhktn7S0bBDLxvQ=
-github.com/alecthomas/chroma/v2 v2.11.1 h1:m9uUtgcdAwgfFNxuqj7AIG75jD2YmL61BBIJWtdzJPs=
-github.com/alecthomas/chroma/v2 v2.11.1/go.mod h1:4TQu7gdfuPjSh76j78ietmqh9LiurGF0EpseFXdKMBw=
+github.com/alecthomas/chroma/v2 v2.12.0 h1:Wh8qLEgMMsN7mgyG8/qIpegky2Hvzr4By6gEF7cmWgw=
+github.com/alecthomas/chroma/v2 v2.12.0/go.mod h1:4TQu7gdfuPjSh76j78ietmqh9LiurGF0EpseFXdKMBw=
 github.com/alecthomas/kong v0.8.1 h1:acZdn3m4lLRobeh3Zi2S2EpnXTd1mOL6U7xVml+vfkY=
 github.com/alecthomas/kong v0.8.1/go.mod h1:n1iCIO2xS46oE8ZfYCNDqdR0b0wZNrXAIAqro/2132U=
 github.com/alecthomas/repr v0.2.0 h1:HAzS41CIzNW5syS8Mf9UwXhNH1J9aix/BvDRf1Ml2Yk=
@@ -134,10 +132,6 @@ github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjR
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/sahilm/fuzzy v0.1.0 h1:FzWGaw2Opqyu+794ZQ9SYifWv2EIXpwP4q8dY1kDAwI=
 github.com/sahilm/fuzzy v0.1.0/go.mod h1:VFvziUEIMCrT6A6tw2RFIXPXXmzXbOsSHF0DOI8ZK9Y=
-github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21 h1:yWfiTPwYxB0l5fGMhl/G+liULugVIHD9AU77iNLrURQ=
-github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21/go.mod h1:fCa7OJZ/9DRTnOKmxvT6pn+LPWUptQAmHF/SBJUGEcg=
-github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231117155000-b7672127ea65 h1:ecI+ocsfBfEGGRPWs9pLazW2klg2G8s/JHVQzSEZoBQ=
-github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231117155000-b7672127ea65/go.mod h1:fCa7OJZ/9DRTnOKmxvT6pn+LPWUptQAmHF/SBJUGEcg=
 github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231129143420-fc2786526538 h1:bk5ZrvC/SGf6cXbQs+GYMIKrPdQdNYgu3sSm4XMXhGE=
 github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231129143420-fc2786526538/go.mod h1:fCa7OJZ/9DRTnOKmxvT6pn+LPWUptQAmHF/SBJUGEcg=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
