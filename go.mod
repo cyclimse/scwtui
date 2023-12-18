@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	github.com/alecthomas/chroma/v2 v2.12.0
 	github.com/brianvoe/gofakeit/v6 v6.26.0
-	github.com/charmbracelet/bubbletea v0.24.2
+	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/xeonx/timeago v1.0.0-rc5
@@ -53,7 +53,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/rogpeppe/go-internal v1.10.0 // indirect
-	github.com/sahilm/fuzzy v0.1.0 // indirect
+	github.com/sahilm/fuzzy v0.1.1-0.20230530133925-c48e322e2a8f // indirect
 	go.etcd.io/bbolt v1.3.8 // indirect
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/term v0.13.0 // indirect
@@ -67,7 +67,7 @@ require (
 	github.com/alecthomas/kong v0.8.1
 	github.com/blevesearch/bleve/v2 v2.3.10
 	github.com/buger/jsonparser v1.1.1
-	github.com/charmbracelet/bubbles v0.16.1
+	github.com/charmbracelet/bubbles v0.17.1
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/mattn/go-sqlite3 v1.14.18
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231129143420-fc2786526538
