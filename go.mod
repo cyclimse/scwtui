@@ -5,7 +5,7 @@ go 1.21.1
 require (
 	github.com/alecthomas/chroma/v2 v2.12.0
 	github.com/brianvoe/gofakeit/v6 v6.26.0
-	github.com/charmbracelet/bubbletea v0.24.2
+	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/xeonx/timeago v1.0.0-rc5
