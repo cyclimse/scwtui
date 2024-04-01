@@ -64,7 +64,7 @@ require (
 )
 
 require (
-	github.com/alecthomas/kong v0.8.1
+	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.3.10
 	github.com/buger/jsonparser v1.1.1
 	github.com/charmbracelet/bubbles v0.18.0
