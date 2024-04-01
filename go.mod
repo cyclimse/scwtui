@@ -71,7 +71,7 @@ require (
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.21.0.20231129143420-fc2786526538
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/sync v0.5.0
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
